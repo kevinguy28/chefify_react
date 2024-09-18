@@ -1,0 +1,18 @@
+@import url(//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css);
+
+/* CONTAINER STYLES */
+
+.page-container {
+    width: 100%;
+    color: var(--color-text);
+    background-color: var(--color-bg);
+    display:grid;
+  }
+
+.page-container.recipePage{
+  grid-template-columns: 1fr 2fr 1fr;
+}
+
+.page-container.recipeComponentForm{
+  grid-template-columns: 1fr 1fr;
+} 

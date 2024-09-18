@@ -1,25 +1,51 @@
 import React, {useState, useEffect, useContext} from 'react';
-import CommunityRecipeItem from '../CommunityRecipeItem';
-import AuthContext from '../../context/AuthContext'
-import { Link } from 'react-router-dom'
+import AuthContext from '../../context/AuthContext';
+import { Link, useLocation } from 'react-router-dom';
+
+import {getRecipes} from "../../utils/CRUD.js";
+
+import '../../styling/css/recipe.css';
+import food from '../../styling/images/a.png';
 
 const RecipeTab = () => {
 
-  let {authTokens } = useContext(AuthContext)
-  let [recipes, setRecipe] = useState([]);
-  let [csrfToken, setCsrfToken] = useState('');
+  const location = useLocation();
+
+  let {authTokens} = useContext(AuthContext)
+  let [recipes, setRecipes] = useState([]);
+  let [load, setLoad] = useState(true);
 
   useEffect(() => {
-      // getRecipe()
-  },[]);
+    const fetchData = async () => {
+      if (load) {
+        const { recipesData } = await getRecipes(authTokens, location); 
+        setRecipes(recipesData)
+        setLoad(false);
+      }
+    };
+    fetchData();
+  }, [location, load]);
+
+  useEffect(() => {
+    setLoad(true)
+  }, [location]);
 
   return (
     <div> 
       <h1>Community Recipes</h1><hr /> 
+      <Link to={`/recipe/form`}>Create Recipe</Link><br/>
 
-      <Link to={`/recipe/form`}>Create Recipe</Link>
-
-      
+      <div className='recipe-section card-container '>
+        {recipes.map((recipe, index) => (
+          <div className="recipe-content card">
+            <img src={food}/>
+            <div className='card-content'>             
+              <Link to={`/recipe/${recipe.id}`} key={index}>{recipe.name}<br/></Link>
+              <p>More content More content More content More content More content More content More content More content More content</p>
+            </div>
+          </div>
+        ))}
+      </div>
 
     </div>
   )

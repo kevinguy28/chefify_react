@@ -1,17 +1,23 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {Link, useLocation} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import AuthContext from "../../context/AuthContext";
+import {getCategories} from "../../utils/CRUD.js";
 
 const CategoriesTab = () => {
 
     const location = useLocation();
+    let navigate = useNavigate();
 
     let [categories, setCategories] = useState([]);
-    let {authTokens} = useContext(AuthContext)
-    let [csrfToken, setCsrfToken] = useState('');
+    let {authTokens, getCsrfToken} = useContext(AuthContext)
 
     useEffect(() => {
-        getCategories()
+        const fetchData = async () => {
+            let csrfToken = getCsrfToken();
+            const {categoriesData} = await getCategories(authTokens, csrfToken)
+            setCategories(categoriesData)
+        };
+        fetchData();
     },[]);
 
     // Handles Query Parameters
@@ -19,28 +25,14 @@ const CategoriesTab = () => {
     const queryCategoryHandleClick = (category) => {
         const queryParams = new URLSearchParams(location.search);
         queryParams.set('category', category);
-        return `/?${queryParams.toString()}`;
+        navigate(`/?${queryParams.toString()}`);
     }
-
-    // Get Functions
-    
-    let getCategories = async () => {
-        let response = await fetch('/api/categories/',{
-            method: 'GET',
-            headers:{
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + String(authTokens?.access)
-            }
-        });
-        let data = await response.json()
-        setCategories(data)
-    };
 
   return (
     <div>
         <h1>Categories</h1><hr/>
         {categories.map((category, index) => (
-            <Link to={queryCategoryHandleClick(category.name)} key={category.id}>{category.name}<br/></Link> 
+            <div onClick={() => queryCategoryHandleClick(category.name)} key={category.id}>{category.name}<br/></div> 
         ))}
     </div>
   )

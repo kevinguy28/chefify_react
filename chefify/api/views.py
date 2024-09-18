@@ -1,4 +1,9 @@
-from django.shortcuts import render
+from decimal import Decimal
+
+from django.core.paginator import Paginator
+
+from django.db.models import Q
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -7,8 +12,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from .serializers import CategoriesSerializer, IngredientSerializer, ProfileSerializer
-from .models import Categories, Ingredient, Profile, Recipe, User
+from .serializers import CategoriesSerializer, ProfileSerializer, RecipeSerializer, StepsSerializer, IngredientSerializer, RecipeComponentsSerializer, MessageSerailizer, ReviewSerializer
+from .models import Categories, Ingredient, Profile, Recipe, User, Steps, RecipeComponents, IngredientUnit, Message, Review
 
 
 # Create your views here.
@@ -28,6 +33,19 @@ class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 @api_view(['GET'])
+def getUser(request, pk):
+    user = User.objects.get(id=pk)
+    data = request.data
+    if request.method == "GET":
+        # Get User Review Information
+        review = Review.objects.filter(user=user)
+        reviewSerializer = ReviewSerializer(review, many=True)
+        userData = {
+            'reviews': reviewSerializer.data,
+        }
+        return Response(userData)
+
+@api_view(['GET'])
 # @permission_classes([IsAuthenticated])
 def getCategories(request):
     if request.method == "GET":
@@ -39,8 +57,7 @@ def getCategories(request):
 # @permission_classes([IsAuthenticated])
 def manageProfile(request, pk):
     data = request.data
-    profile = Profile.objects.get(user=pk)
-
+    profile = Profile.objects.get(id=pk)
     if request.method == "POST":
         try:
             ingredient = Ingredient.objects.get(name=data['name'].capitalize())
@@ -58,8 +75,6 @@ def manageProfile(request, pk):
                 return Response({"message": "Ingredient added to shopping list."}, status=status.HTTP_200_OK)    
             return Response({"message": "Ingredient already in shopping list."}, status=status.HTTP_200_OK)
         return Response({"message": "Nothing could be added"}, status=status.HTTP_200_OK)
-
-
     elif request.method == "GET":
         try:
             serializer = ProfileSerializer(profile)
@@ -67,7 +82,6 @@ def manageProfile(request, pk):
         except:
             return Response({"message": "No Ingredient List found"}, status=status.HTTP_404_NOT_FOUND)
     
-        
     elif request.method == "DELETE":
         try:
             ingredient = Ingredient.objects.get(name=data['name'].capitalize())
@@ -89,9 +103,172 @@ def manageRecipes(request):
         try:
             user = User.objects.get(id=data["user_id"])
             category = Categories.objects.get(name=data["category"])
+            Recipe.objects.create(name=data["name"], user=user, categories=category, privacy=data["privacy"])
+            return Response({"message": "Recipe Created"}, status=status.HTTP_200_OK)
         except:
             return Response({"message": "User could not be found."}, status=status.HTTP_404_NOT_FOUND)
-        
-        Recipe.objects.create(name=data["name"], user=user, categories=category, privacy=data["privacy"])
+    elif request.method == "GET":
+        c_recipes = Recipe.objects.all()
+        q = request.GET.get('category') if request.GET.get('category') != None else ''
+        c_recipes = Recipe.objects.filter(Q(categories__name__icontains= q) & (Q(privacy='public')))
+        serializer = RecipeSerializer(c_recipes, many=True)
+        return Response(serializer.data)
 
-    return Response({"message": "Recipe Created"}, status=status.HTTP_200_OK)
+@api_view(['GET'])
+def manageRecipe(request, pk):
+    data = request.data
+
+    if request.method == "GET":
+        try:
+            recipe = Recipe.objects.get(id=pk)
+            serializer = RecipeSerializer(recipe)
+            return(Response(serializer.data))
+        except:
+            return Response({"message": "Recipe could not be retrieved."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def getReviewUser(request, pk, sk):
+    data = request.data
+    if request.method == "GET":
+        try:
+            recipe = Recipe.objects.get(id=pk)
+            user = User.objects.get(id=sk)
+            review = Review.objects.get(recipe=recipe,user=user)
+            serializer = ReviewSerializer(review)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            print("review doesn't exist")
+            return Response({"message": "Review doesn't exist"}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['POST'])
+def postReview(request):
+    data = request.data
+    user = User.objects.get(id=data["user_id"])
+    recipe = Recipe.objects.get(id=data["recipe_id"])
+    print(data["rating"])
+    Review.objects.create(recipe=recipe, user=user, review_text=data["review_text"],rating=data["rating"])
+    recipe.reviewers.add(user)
+    return Response({"message": "Step was created"}, status=status.HTTP_200_OK)
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def manageReview(request, pk):
+    data = request.data
+    if request.method == "GET":
+        recipe = Recipe.objects.get(id=pk)
+        reviews = Review.objects.filter(recipe=recipe).order_by("created")
+        pageNumber = request.GET.get('page', 1)
+        paginator = Paginator(reviews, 3)
+        page = paginator.get_page(pageNumber)
+        serializer = ReviewSerializer(page, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    elif request.method == "PUT":
+        recipe = Recipe.objects.get(id=pk)
+        user = User.objects.get(id=data["user_id"])
+        review = Review.objects.get(recipe=recipe, user=user)
+        review.rating = data["rating"]
+        review.review_text = data["review_text"]
+        review.save()
+        return Response({"message": "Step was created"}, status=status.HTTP_200_OK)
+    elif request.method == "DELETE":
+        review = Review.objects.get(id=pk)
+        recipe = Recipe.objects.get(id=review.recipe.id)
+        review.delete()
+        recipe.reviewers.remove(review.user)
+        return Response({"message": "Step was created"}, status=status.HTTP_200_OK)
+    return Response({"message": "Step was created"}, status=status.HTTP_200_OK) 
+
+@api_view(['POST', 'GET'])
+def manageSteps(request, pk):
+    data = request.data
+    if request.method == "POST":
+        try:
+
+            recipe = Recipe.objects.get(id=pk)
+            user = User.objects.get(id=data["user_id"])
+            last_step = Steps.objects.filter(recipe=recipe).order_by('-order').first()
+            if last_step:
+                last_step = last_step.order + 1
+            else:
+                last_step= 1
+            description = data["description"]
+
+            Steps.objects.create(recipe=recipe,description=description,order=last_step,user=user)
+            return Response({"message": "Step was created"}, status=status.HTTP_200_OK)
+        except:
+            return Response({"message": "Steps could not be created."}, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == "GET":
+        try:
+            recipe = Recipe.objects.get(id=pk)
+            steps = Steps.objects.filter(recipe=recipe)
+            serializer = StepsSerializer(steps, many=True)
+            return Response(serializer.data)
+        except:
+            return Response({"message": "Steps could not be found."}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['POST', 'GET'])
+def manageRecipeComponents(request, pk):
+    data = request.data
+    recipe = Recipe.objects.get(id=pk)
+    if request.method == "POST":
+        try:
+            RecipeComponents.objects.create(name=data["name"], recipe=recipe)
+            return Response({"message": "Recipe Component was created."}, status=status.HTTP_200_OK)
+        except:
+            return Response({"message": "Recipe Component could not be created."}, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == "GET":
+        try:
+            recipeComponents = RecipeComponents.objects.filter(recipe=recipe)
+            serializer = RecipeComponentsSerializer(recipeComponents, many=True)
+            return Response(serializer.data)
+        except:
+            return Response({"message": "Recipe Components could not be found."}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['POST', 'GET'])    
+def manageIngredientUnit(request, pk):
+    data = request.data
+    if request.method == "POST":
+        try:
+            recipeComponent = RecipeComponents.objects.get(id=pk)
+            if not Ingredient.objects.filter(name=data["ingredient"]).exists():
+                ingredient = Ingredient.objects.create(name=data["ingredient"])
+            else:
+                ingredient = Ingredient.objects.get(name=data["ingredient"])
+
+            ingredientUnit = IngredientUnit.objects.create(ingredient=ingredient, unit=data["unit"], quantity=data["quantity"])
+            recipeComponent.ingredientsList.add(ingredientUnit)
+            return Response({"message": "Ingredient was added to recipe component."}, status=status.HTTP_200_OK)
+        except:
+            return Response({"message": "Recipe Components could not be found."}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(["POST", "GET"])
+def manageMessages(request, pk):
+    data = request.data 
+    recipe = Recipe.objects.get(id=pk)
+    user = request.user
+    if request.method == "POST":
+        Message.objects.create(recipe=recipe, user=user,body=data["body"])
+        return Response({"message": "okay"}, status=status.HTTP_200_OK)
+    elif request.method == "GET":
+        
+        # messages = Message.objects.filter(recipe=recipe)
+        # serializer = MessageSerailizer(messages, many=True)
+        # return Response(serializer.data)
+        
+        messages = Message.objects.filter(recipe=recipe).order_by("created")
+        pageNumber = request.GET.get('page', 1)
+        paginator = Paginator(messages, 3)
+        page = paginator.get_page(pageNumber)
+        serializer = MessageSerailizer(page, many=True)
+        print("bithc ass")
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+        recipe = Recipe.objects.get(id=pk)
+        reviews = Review.objects.filter(recipe=recipe).order_by("created")
+        pageNumber = request.GET.get('page', 1)
+        paginator = Paginator(reviews, 3)
+        page = paginator.get_page(pageNumber)
+        serializer = ReviewSerializer(page, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+            
+            
