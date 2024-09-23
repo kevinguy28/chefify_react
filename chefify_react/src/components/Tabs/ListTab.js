@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from 'react'
-import AuthContext from '../../context/AuthContext';
+import AuthContext from '../../context/AuthContext.js';
 import {getList, addList, deleteFromList} from "../../utils/CRUD.js";
 
 const ListTab = ({typeList}) => {

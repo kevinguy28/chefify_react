@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from 'react';
-import AuthContext from '../../context/AuthContext';
+import AuthContext from '../../context/AuthContext.js';
 import { Link, useLocation } from 'react-router-dom';
 
 import {getRecipes} from "../../utils/CRUD.js";
