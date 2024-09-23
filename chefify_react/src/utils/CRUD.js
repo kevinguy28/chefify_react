@@ -1,19 +1,5 @@
 // MISC
 
-// export const getUserReview = async(authTokens, recipeId, userId, csrfToken) =>{
-//     let response = await fetch(`/api/review/${recipeId}/${userId}`,{
-//         method: 'GET',
-//         headers:{
-//             'Content-Type': 'application/json',
-//             'Authorization': 'Bearer ' + String(authTokens?.access),
-//             'X-CSRFToken': csrfToken,
-//         },
-//         credentials: 'include',
-//     });
-//     let userReview = await response.json()
-//     return {userReview}
-// };
-
 export const getUser = async(authTokens, userId, csrfToken) =>{
     let response = await fetch(`/api/user/${userId}`,{
         method: 'GET',
@@ -28,6 +14,21 @@ export const getUser = async(authTokens, userId, csrfToken) =>{
     let user = await response.json()
     return user
 }
+
+// Register
+
+export const postUser = async(csrfToken, e) => {
+    let response = await fetch(`/api/register/`, {
+        method: 'POST',
+        headers:{
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+        },
+        credentials: 'include',
+        body: JSON.stringify({'username': e.target.username.value, 'password':e.target.password.value})
+    })
+    return response
+};
 
 // Categories
 

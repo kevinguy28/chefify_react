@@ -41,8 +41,18 @@ const ListTab = ({typeList}) => {
                 let csrfToken = getCsrfToken();
                 const { listData } = await getList(user, authTokens, csrfToken);
                 if(typeList === "ingredientsList"){
+                    listData?.ingredientsList.sort((a, b) => {
+                        if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+                        if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+                        return 0;
+                    });
                     setList(listData.ingredientsList);
                 }else if(typeList === "shoppingList"){
+                    listData?.shoppingList.sort((a, b) => {
+                        if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+                        if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+                        return 0;
+                    });
                     setList(listData.shoppingList);
                 }
                 setLoad(false);

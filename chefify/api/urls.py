@@ -16,6 +16,7 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('csrf/', csrf),
     path('user/<str:pk>/', views.getUser, name="getUser"),
+    path('register/', views.postUser, name="postUser"),
     path('categories/', views.getCategories, name="getCategories"),
     path('recipe/', views.manageRecipes, name="manageRecipes"),
     path('recipe/<str:pk>/', views.manageRecipe, name="manageRecipe"),

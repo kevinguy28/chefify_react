@@ -45,6 +45,20 @@ def getUser(request, pk):
         }
         return Response(userData)
 
+@api_view(['POST'])
+def postUser(request):
+    data = request.data
+    if request.method == "POST":
+        username = data["username"]
+        password = data["password"]
+        if(len(password) < 8):
+            return Response({"message": "Password length must by 8 characters!"}, status=status.HTTP_400_BAD_REQUEST)
+        user = User.objects.create(username=username, password=password)
+        if(user):
+            Profile.objects.create(user=user)
+            return Response({"message": "Account created!"}, status=status.HTTP_200_OK)
+    return Response({"message": "Account creation failed!"}, status=status.HTTP_400_BAD_REQUEST)
+
 @api_view(['GET'])
 # @permission_classes([IsAuthenticated])
 def getCategories(request):
@@ -126,7 +140,6 @@ def manageRecipe(request, pk):
         except:
             return Response({"message": "Recipe could not be retrieved."}, status=status.HTTP_400_BAD_REQUEST)
 
-
 @api_view(['GET'])
 def getReviewUser(request, pk, sk):
     data = request.data
@@ -156,7 +169,7 @@ def manageReview(request, pk):
     data = request.data
     if request.method == "GET":
         recipe = Recipe.objects.get(id=pk)
-        reviews = Review.objects.filter(recipe=recipe).order_by("created")
+        reviews = Review.objects.filter(recipe=recipe).order_by("-updated")
         pageNumber = request.GET.get('page', 1)
         paginator = Paginator(reviews, 3)
         page = paginator.get_page(pageNumber)
@@ -255,20 +268,11 @@ def manageMessages(request, pk):
         # serializer = MessageSerailizer(messages, many=True)
         # return Response(serializer.data)
         
-        messages = Message.objects.filter(recipe=recipe).order_by("created")
+        messages = Message.objects.filter(recipe=recipe).order_by("-created")
         pageNumber = request.GET.get('page', 1)
         paginator = Paginator(messages, 3)
         page = paginator.get_page(pageNumber)
         serializer = MessageSerailizer(page, many=True)
         print("bithc ass")
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
-        recipe = Recipe.objects.get(id=pk)
-        reviews = Review.objects.filter(recipe=recipe).order_by("created")
-        pageNumber = request.GET.get('page', 1)
-        paginator = Paginator(reviews, 3)
-        page = paginator.get_page(pageNumber)
-        serializer = ReviewSerializer(page, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-            
             

@@ -30,10 +30,6 @@ const RecipePage = () => {
   let [gotComments, setGotComments] = useState(false);
   let [hasMoreComments, setHasMoreComments] = useState(true) 
 
-
-  
-
-
   let [formData, setFormData] = useState({
     "body": "",
   });
@@ -167,7 +163,6 @@ const RecipePage = () => {
       let response = await getMessages(authTokens, recipeId, commentPages, csrfToken);
       if(response.ok){
         let data = await response.json();
-        console.log(data);
         if(data.length > 0){
           setMessages(data);
           setGotComments(true);
@@ -237,7 +232,7 @@ const RecipePage = () => {
   useEffect(() => {
     fetchPublicReview();
     fetchComments();
-  },[reviewPages, commentPages]);
+  },[reviewPages, commentPages, load]);
   
   return (
     <div className="page-container recipePage">
@@ -329,11 +324,11 @@ const RecipePage = () => {
               <p key={item.id}> {item.user.username} - {item.review_text}</p>
             ))}
             {hasMoreReviews && (
-              <button style={{ color: 'black'}} name="goBackReview" onClick={backPage}>Go Back</button>
+              <button className={reviewPages == 1 ? "hide" : ""} style={{ color: 'black'}} name="goBackReview" onClick={backPage}>Go Back</button>
             )}
             {hasMoreReviews && (
-              <button style={{ color: 'black'}} name="loadMoreReview" onClick={loadMore}>Load More</button>
-            )}; 
+              <button className={hasMoreReviews == false ? "hide" : ""} style={{ color: 'black'}} name="loadMoreReview" onClick={loadMore}>Load More</button>
+            )}
           </div> 
         </div>
         <br/>
@@ -343,11 +338,11 @@ const RecipePage = () => {
           <p>{message.user.username}: {message.body}</p>
         ))}
         {hasMoreComments && (
-          <button style={{ color: 'black'}} name="goBackComments" onClick={backPage}>Go Back</button>
+          <button className={commentPages == 1 ? "hide" : ""} style={{ color: 'black'}} name="goBackComments" onClick={backPage}>Go Back</button>
         )}
         {hasMoreComments && (
-          <button style={{ color: 'black'}} name="loadMoreComments" onClick={loadMore}>Load More</button>
-        )}; 
+          <button className={hasMoreComments == false ? "hide" : ""} style={{ color: 'black'}} name="loadMoreComments" onClick={loadMore}>Load More</button>
+        )}
         <form className='text-box'>
           <textarea name="textarea" rows="20" cols="60" placeholder='Your comment ...' onChange={handleChange}></textarea>
           <input type="submit" value="Submit" onClick={handleSubmit} name="submitComment"/>
