@@ -6,6 +6,7 @@
   --color-text: BLACK;
   --color-text-alt: rgb(44, 43, 43);
   --color-dark: #5D707F;
+  --color-dark-light: #7d91a1;
   --color-light: #8797B2;
   --color-light: #b0bdd3;
   --color-bright: #66CED6;
@@ -17,6 +18,7 @@
   --color-text: BLACK;
   --color-text-alt: rgb(44, 43, 43);
   --color-dark: #383838;
+  --color-dark-light:#5c5c5c;
   --color-light: #ADC698;
   --color-lighter: #D0E3C4;
   --color-bright: #C05746;
@@ -28,6 +30,7 @@
   --color-text: white;
   --color-text-alt: rgb(180, 180, 180);
   --color-dark: #4a5859;
+  --color-dark-light: #576566a3;
   --color-light: #F4B860;
   --color-light-alt: #fffb00;
   --color-lighter: #f4d6cc;
@@ -102,5 +105,17 @@ input{
   box-shadow: none; /* Remove box shadow */
 }
 
+h1{
+  font-size: 1.4rem;
+}
 
+/* Utility */
+
+.hide{
+  display: none;
+}
+
+.visbility{
+  visibility: hidden;
+}
 

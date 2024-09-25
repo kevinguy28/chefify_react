@@ -1,4 +1,4 @@
-.loginForm{
+/* .loginForm{
     display: flex;
     flex-direction: column;
     padding:10px;
@@ -22,4 +22,87 @@
 .loginLabel{
     margin: 0 auto;
     width: 80%;
+} */
+
+.cardAlignment{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.credentialForm{
+    display: flex;
+    flex-direction: column;
+}
+
+.credentialsCard{
+    width: 75%;
+    margin: 0 auto;
+}
+
+.loginLabel{
+    font-weight: bold;
+}
+
+.loginInput{
+    width: 100%;
+    padding: 0.5rem;
+    border-bottom: solid;
+    border-color: var(--color-bg);
+}
+
+.loginInput:focus{
+    outline: none;
+}
+
+.loginCard{
+    background-color: #FAF9F6;
+    padding: 1rem;
+    width: 50%;
+    color: black;
+}
+
+.registerCard{
+    /* background-color: rgb(60, 60, 62); */
+    background-color: white;
+    padding: 1rem;
+    width: 50%;
+    color: black;
+}
+
+.registerCardOff{
+    /* background: linear-gradient(45deg, black, var(--color-bright), white); */
+    background-color: var(--color-bright-alt);
+}
+
+.tmp{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.submitCredentials{
+    margin: 1rem 0 1rem 0;
+    width: 100%;
+    background-color: var(--color-dark-light);
+    padding: 0.3rem;
+    border-radius: 2rem;
+    color:#FAF9F6;
+    font-weight: bold;
+}
+
+.tmp2{
+    color:#FAF9F6;
+}
+
+.submitCredential2{
+    margin: 1rem 0 1rem 0;
+    width: 33%;
+    background-color: var(--color-dark-light);
+    padding: 0.3rem;
+    border-radius: 2rem;
+    text-align: center;
+    color:#FAF9F6;
+    font-weight: bold;
 }
