@@ -4,7 +4,6 @@ import AuthContext from '../context/AuthContext';
 import '../styling/css/page.css';
 import { getSteps, getMessages, getRecipeComponents, postMessage, getRecipe, postReview, putReview, deleteReview, getUserReview, getReviews} from '../utils/CRUD';
 import food from '../styling/images/a.png';
-import {ReactComponent as MyIcon}  from '../styling/svg/star.svg';
 import "../styling/css/recipePage.css";
 
 const RecipePage = () => {
@@ -62,7 +61,7 @@ const RecipePage = () => {
   const handleSubmit = async(e) =>{
     let csrfToken = getCsrfToken();
     if(e.target.name === "submitReview"){
-      if(reviewForm.rating != 0.0){
+      if(reviewForm.rating !== 0.0){
         let response = await postReview(authTokens, reviewForm, csrfToken);
         if(response.status === 200){
           setEditOff(true);
@@ -193,12 +192,12 @@ const RecipePage = () => {
   };
 
   let setRecipeStar = () =>{
-    if(!load && (recipe.rating != 0)){
+    if(!load && (recipe.rating !== 0.0)){
       const htmlElement = document.getElementById(`recipeRating${recipe.rating*2}`);
       if(htmlElement){
         htmlElement.checked = true;
       }
-    }else if(!load && recipe.rating == 0){
+    }else if(!load && recipe.rating === 0){
       document.getElementById("averageReview").reset();
     };
   };
@@ -215,9 +214,9 @@ const RecipePage = () => {
 
   const backPage = (e) => {
     console.log(e.target.name)
-    if(e.target.name === "goBackReview" && reviewPages != 1){
+    if(e.target.name === "goBackReview" && reviewPages !== 1){
       setReviewPages(prevPage => prevPage - 1);
-    }else if (e.target.name === "goBackComments" && commentPages != 1){
+    }else if (e.target.name === "goBackComments" && commentPages !== 1){
       setCommentPages(prevPage => prevPage - 1);
     }
   }
@@ -273,17 +272,17 @@ const RecipePage = () => {
             <h3 className='subheading'>Public Rating:</h3>
             <div >
               <form id="averageReview">
-                <fieldset class="rate non-clickable" onChange={handleChange} name="averageReview">
-                  <input  type="radio" id="recipeRating10" name="averageReview" value="5.0" /><label for="recipeRating10" title="5 stars"></label>
-                  <input  type="radio" id="recipeRating9" name="averageReview" value="4.5" /><label class="half" for="recipeRating9" title="4 1/2 stars"></label>
-                  <input  type="radio" id="recipeRating8" name="averageReview" value="4.0" /><label for="recipeRating8" title="4 stars"></label>
-                  <input  type="radio" id="recipeRating7" name="averageReview" value="3.5" /><label class="half" for="recipeRating7" title="3 1/2 stars"></label>
-                  <input  type="radio" id="recipeRating6" name="averageReview" value="3.0" /><label for="recipeRating6" title="3 stars"></label>
-                  <input  type="radio" id="recipeRating5" name="averageReview" value="2.5" /><label class="half" for="recipeRating5" title="2 1/2 stars"></label>
-                  <input  type="radio" id="recipeRating4" name="averageReview" value="2.0" /><label for="recipeRating4" title="2 stars"></label>
-                  <input  type="radio" id="recipeRating3" name="averageReview" value="1.5" /><label class="half" for="recipeRating3" title="1 1/2 stars"></label>
-                  <input  type="radio" id="recipeRating2" name="averageReview" value="1.0" /><label for="recipeRating2" title="1 star"></label>
-                  <input  type="radio" id="recipeRating1" name="averageReview" value="0.5" /><label class="half" for="recipeRating1" title="1/2 star"></label>
+                <fieldset className="rate non-clickable" onChange={handleChange} name="averageReview">
+                  <input  type="radio" id="recipeRating10" name="averageReview" value="5.0" /><label className="label" for="recipeRating10" title="5 stars"></label>
+                  <input  type="radio" id="recipeRating9" name="averageReview" value="4.5" /><label className="half label" for="recipeRating9" title="4 1/2 stars"></label>
+                  <input  type="radio" id="recipeRating8" name="averageReview" value="4.0" /><label className="label" for="recipeRating8" title="4 stars"></label>
+                  <input  type="radio" id="recipeRating7" name="averageReview" value="3.5" /><label className="half label" for="recipeRating7" title="3 1/2 stars"></label>
+                  <input  type="radio" id="recipeRating6" name="averageReview" value="3.0" /><label className="label" for="recipeRating6" title="3 stars"></label>
+                  <input  type="radio" id="recipeRating5" name="averageReview" value="2.5" /><label className="half label" for="recipeRating5" title="2 1/2 stars"></label>
+                  <input  type="radio" id="recipeRating4" name="averageReview" value="2.0" /><label className="label" for="recipeRating4" title="2 stars"></label>
+                  <input  type="radio" id="recipeRating3" name="averageReview" value="1.5" /><label className="half label" for="recipeRating3" title="1 1/2 stars"></label>
+                  <input  type="radio" id="recipeRating2" name="averageReview" value="1.0" /><label className="label" for="recipeRating2" title="1 star"></label>
+                  <input  type="radio" id="recipeRating1" name="averageReview" value="0.5" /><label className="half label" for="recipeRating1" title="1/2 star"></label>
                 </fieldset>
               </form> 
             </div>
@@ -298,16 +297,16 @@ const RecipePage = () => {
             
             <br/>
             <fieldset className={`rate ${submitMode || editOnMode ? "" : "non-clickable"}`} onChange={handleChange} name="rating" id="starRating">
-              <input  type="radio" id="rating10" name="rating" value="5.0" /><label for="rating10" title="5 stars"></label>
-              <input  type="radio" id="rating9" name="rating" value="4.5" /><label class="half" for="rating9" title="4 1/2 stars"></label>
-              <input  type="radio" id="rating8" name="rating" value="4.0" /><label for="rating8" title="4 stars"></label>
-              <input  type="radio" id="rating7" name="rating" value="3.5" /><label class="half" for="rating7" title="3 1/2 stars"></label>
-              <input  type="radio" id="rating6" name="rating" value="3.0" /><label for="rating6" title="3 stars"></label>
-              <input  type="radio" id="rating5" name="rating" value="2.5" /><label class="half" for="rating5" title="2 1/2 stars"></label>
-              <input  type="radio" id="rating4" name="rating" value="2.0" /><label for="rating4" title="2 stars"></label>
-              <input  type="radio" id="rating3" name="rating" value="1.5" /><label class="half" for="rating3" title="1 1/2 stars"></label>
-              <input  type="radio" id="rating2" name="rating" value="1.0" /><label for="rating2" title="1 star"></label>
-              <input  type="radio" id="rating1" name="rating" value="0.5" /><label class="half" for="rating1" title="1/2 star"></label>
+              <input  type="radio" id="rating10" name="rating" value="5.0" /><label className="label" for="rating10" title="5 stars"></label>
+              <input  type="radio" id="rating9" name="rating" value="4.5" /><label className="half label" for="rating9" title="4 1/2 stars"></label>
+              <input  type="radio" id="rating8" name="rating" value="4.0" /><label className="label" for="rating8" title="4 stars"></label>
+              <input  type="radio" id="rating7" name="rating" value="3.5" /><label className="half label" for="rating7" title="3 1/2 stars"></label>
+              <input  type="radio" id="rating6" name="rating" value="3.0" /><label className="label" for="rating6" title="3 stars"></label>
+              <input  type="radio" id="rating5" name="rating" value="2.5" /><label className="half label" for="rating5" title="2 1/2 stars"></label>
+              <input  type="radio" id="rating4" name="rating" value="2.0" /><label className="label" for="rating4" title="2 stars"></label>
+              <input  type="radio" id="rating3" name="rating" value="1.5" /><label className="half label" for="rating3" title="1 1/2 stars"></label>
+              <input  type="radio" id="rating2" name="rating" value="1.0" /><label className="label" for="rating2" title="1 star"></label>
+              <input  type="radio" id="rating1" name="rating" value="0.5" /><label className="half label" for="rating1" title="1/2 star"></label>
             </fieldset>
             
             <p id="reviewText" className={editOffMode ? "" : "hide"}></p>
@@ -324,10 +323,10 @@ const RecipePage = () => {
               <p key={item.id}> {item.user.username} - {item.review_text}</p>
             ))}
             {hasMoreReviews && (
-              <button className={reviewPages == 1 ? "hide" : ""} style={{ color: 'black'}} name="goBackReview" onClick={backPage}>Go Back</button>
+              <button className={reviewPages === 1 ? "hide" : ""} style={{ color: 'black'}} name="goBackReview" onClick={backPage}>Go Back</button>
             )}
             {hasMoreReviews && (
-              <button className={hasMoreReviews == false ? "hide" : ""} style={{ color: 'black'}} name="loadMoreReview" onClick={loadMore}>Load More</button>
+              <button className={hasMoreReviews === false ? "hide" : ""} style={{ color: 'black'}} name="loadMoreReview" onClick={loadMore}>Load More</button>
             )}
           </div> 
         </div>
@@ -338,10 +337,10 @@ const RecipePage = () => {
           <p>{message.user.username}: {message.body}</p>
         ))}
         {hasMoreComments && (
-          <button className={commentPages == 1 ? "hide" : ""} style={{ color: 'black'}} name="goBackComments" onClick={backPage}>Go Back</button>
+          <button className={commentPages === 1 ? "hide" : ""} style={{ color: 'black'}} name="goBackComments" onClick={backPage}>Go Back</button>
         )}
         {hasMoreComments && (
-          <button className={hasMoreComments == false ? "hide" : ""} style={{ color: 'black'}} name="loadMoreComments" onClick={loadMore}>Load More</button>
+          <button className={hasMoreComments === false ? "hide" : ""} style={{ color: 'black'}} name="loadMoreComments" onClick={loadMore}>Load More</button>
         )}
         <form className='text-box'>
           <textarea name="textarea" rows="20" cols="60" placeholder='Your comment ...' onChange={handleChange}></textarea>

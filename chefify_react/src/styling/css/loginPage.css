@@ -1,0 +1,25 @@
+.loginForm{
+    display: flex;
+    flex-direction: column;
+    padding:10px;
+    background-color: var(--color-dark);
+    width: 50%;
+    margin: 0 auto;
+}
+
+.loginInput{
+    width: 80%;
+    margin: 0.5rem auto;
+    padding: 0.5rem;
+    border-bottom: solid;
+    border-color: var(--color-bg);
+}
+
+.loginInput:focus{
+    outline: none;
+}
+
+.loginLabel{
+    margin: 0 auto;
+    width: 80%;
+}
