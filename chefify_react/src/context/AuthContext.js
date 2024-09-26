@@ -43,7 +43,7 @@ export const AuthProvider = ({children}) => {
             localStorage.setItem('authTokens', JSON.stringify(data))
             navigate('/')
         }else{
-            alert("WRONG")
+            alert("The password or username is incorrect.")
         }
     }
 

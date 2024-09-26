@@ -6,6 +6,9 @@ import AuthContext from '../context/AuthContext'
 
 const Header = () => {
   let {user, logoutUser} = useContext(AuthContext)
+
+
+
   return (
     <nav>
         <ul>
@@ -18,7 +21,10 @@ const Header = () => {
             <Link to='/'>Home</Link>
 
             {user ? (
-              <Link to='/' onClick={logoutUser}>Logout</Link>
+              <>
+                <Link to={`/user/${user.user_id}/recipes`}>Recipe</Link>
+                <Link to='/' onClick={logoutUser}>Logout</Link>
+              </>
             ):(
               <Link to='/login/'>Login</Link>
             )}

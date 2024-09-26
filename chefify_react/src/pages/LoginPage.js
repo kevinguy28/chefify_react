@@ -73,6 +73,7 @@ const LoginPage = () => {
           <span className={`submitCredential2 ${loginState ? "tmp2" : "hide"}`} name="register" onClick={changeState}>Register!</span>
         </div>
       </div>
+      <br/>
     </div>
   )
 }

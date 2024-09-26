@@ -32,6 +32,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
+# User (pk = user.user_id) --> Get User instance. Create User instance and Profile associated with User.
 @api_view(['GET'])
 def getUser(request, pk):
     user = User.objects.get(id=pk)
@@ -59,16 +60,26 @@ def postUser(request):
             return Response({"message": "Account created!"}, status=status.HTTP_200_OK)
     return Response({"message": "Account creation failed!"}, status=status.HTTP_400_BAD_REQUEST)
 
+# User (pk = user.user.id) --> Get all User Recipes.
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
+def getUserRecipes(request, pk):
+    if request.method == "GET":
+        print("HEREE")
+        user = User.objects.get(id=pk)
+        recipes = Recipe.objects.filter(user=user)
+        seralizer = RecipeSerializer(recipes, many=True)
+        return Response(seralizer.data)
+
+# Categories --> Get all Categories
+@api_view(['GET'])
 def getCategories(request):
     if request.method == "GET":
         categories = Categories.objects.all()
         serializer = CategoriesSerializer(categories, many=True)
         return Response(serializer.data)
     
+# Profile (pk = profile.id) --> Add Ingredient to User Profile, Get Ingredient/Shopping List from User Profile, Delete Ingredient from User Profile
 @api_view(['POST', 'GET', 'DELETE'])
-# @permission_classes([IsAuthenticated])
 def manageProfile(request, pk):
     data = request.data
     profile = Profile.objects.get(id=pk)
@@ -108,8 +119,9 @@ def manageProfile(request, pk):
         except:
             return Response({"message": "Ingredient could not be found."}, status=status.HTTP_404_NOT_FOUND)
         return Response({"message": "Ingredient could not be found."}, status=status.HTTP_404_NOT_FOUND)
-    
-@api_view(['POST', 'GET', 'DELETE'])
+
+# Recipes --> Create Recipe, Get all Recipes (RecipeTab.js)
+@api_view(['POST', 'GET'])
 def manageRecipes(request):
     data = request.data
     
@@ -128,10 +140,9 @@ def manageRecipes(request):
         serializer = RecipeSerializer(c_recipes, many=True)
         return Response(serializer.data)
 
+# Recipe --> Get singular recipe (RecipePage.js)
 @api_view(['GET'])
 def manageRecipe(request, pk):
-    data = request.data
-
     if request.method == "GET":
         try:
             recipe = Recipe.objects.get(id=pk)
@@ -140,6 +151,7 @@ def manageRecipe(request, pk):
         except:
             return Response({"message": "Recipe could not be retrieved."}, status=status.HTTP_400_BAD_REQUEST)
 
+# Reviews (pk = recipe.id, sk = user.user_id) --> Get use review
 @api_view(['GET'])
 def getReviewUser(request, pk, sk):
     data = request.data
@@ -164,6 +176,7 @@ def postReview(request):
     recipe.reviewers.add(user)
     return Response({"message": "Step was created"}, status=status.HTTP_200_OK)
 
+# Review (pk = recipe.id(GET, PUT) & pk = review.id(DEL)) --> Reviews of Recipe & Delete Review
 @api_view(['GET', 'PUT', 'DELETE'])
 def manageReview(request, pk):
     data = request.data
@@ -191,6 +204,7 @@ def manageReview(request, pk):
         return Response({"message": "Step was created"}, status=status.HTTP_200_OK)
     return Response({"message": "Step was created"}, status=status.HTTP_200_OK) 
 
+# Steps (pk = recipe.id) --> Steps of Recipe
 @api_view(['POST', 'GET'])
 def manageSteps(request, pk):
     data = request.data
@@ -219,6 +233,7 @@ def manageSteps(request, pk):
         except:
             return Response({"message": "Steps could not be found."}, status=status.HTTP_404_NOT_FOUND)
 
+# Recipe Components (pk = recipe.id) --> Recipe Components of Recipe
 @api_view(['POST', 'GET'])
 def manageRecipeComponents(request, pk):
     data = request.data
@@ -237,6 +252,7 @@ def manageRecipeComponents(request, pk):
         except:
             return Response({"message": "Recipe Components could not be found."}, status=status.HTTP_404_NOT_FOUND)
 
+# IngredientUnit (pk = recipeComponent.id) --> Ingredient Unit of Recipe Component
 @api_view(['POST', 'GET'])    
 def manageIngredientUnit(request, pk):
     data = request.data
@@ -254,6 +270,7 @@ def manageIngredientUnit(request, pk):
         except:
             return Response({"message": "Recipe Components could not be found."}, status=status.HTTP_404_NOT_FOUND)
 
+# Messages (pk = recipe.id) --> All messages in recipe
 @api_view(["POST", "GET"])
 def manageMessages(request, pk):
     data = request.data 

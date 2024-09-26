@@ -1,4 +1,5 @@
-// MISC
+// User
+
 
 export const getUser = async(authTokens, userId, csrfToken) =>{
     let response = await fetch(`/api/user/${userId}`,{
@@ -15,8 +16,6 @@ export const getUser = async(authTokens, userId, csrfToken) =>{
     return user
 }
 
-// Register
-
 export const postUser = async(csrfToken, e) => {
     let response = await fetch(`/api/register/`, {
         method: 'POST',
@@ -30,6 +29,20 @@ export const postUser = async(csrfToken, e) => {
     return response
 };
 
+export const getUserRecipes = async (userId, authTokens, csrfToken) =>{
+    console.log("bitch ass")
+    let response = await fetch(`api/user/recipes/${userId}`, {
+        method: 'GET',
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + String(authTokens?.access),
+            'X-CSRFToken': csrfToken,
+        },
+        credentials: 'include',
+    });
+    return response;
+}
+
 // Categories
 
 export const getCategories = async (authTokens, csrfToken) => {
@@ -42,8 +55,8 @@ export const getCategories = async (authTokens, csrfToken) => {
         },
         credentials: 'include',
     });
-    let categoriesData = await response.json()
-    return {categoriesData}
+    let categoriesData = await response.json();
+    return {categoriesData};
 };
 
 // Ingredient Unit

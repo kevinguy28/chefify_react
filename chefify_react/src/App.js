@@ -10,8 +10,9 @@ import RecipeForms from './components/forms/RecipeForms';
 
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage'
-import RecipePage from './pages/RecipePage'
+import RegisterPage from './pages/RegisterPage';
+import RecipePage from './pages/RecipePage';
+import UserRecipePage from './pages/UserRecipePage'
 
 import StepForm from "./components/forms/StepForm";
 import RecipeComponentForm from "./components/forms/RecipeComponentForm";
@@ -38,6 +39,9 @@ function App() {
                 <Route path='/recipe/:recipeId' element={<RecipePage />}/>
                 <Route path="/recipe/:recipeId/form" element={<StepForm />} />
                 <Route path="/recipe/:recipeId/component-form" element={<RecipeComponentForm/>}/>
+              </Route>
+              <Route path='/user/:userId/recipes' element={<PrivateRoute />}>
+                <Route path='/user/:userId/recipes' element={<UserRecipePage />}/>
               </Route>
               <Route path='/login/' element={<LoginPage />} />
               <Route path='/register/' element={<RegisterPage />} />

@@ -16,3 +16,11 @@
 .page-container.recipeComponentForm{
   grid-template-columns: 1fr 1fr;
 } 
+
+.page-container.userRecipePage{
+  grid-template-columns: 5fr 1fr;
+}
+
+.page-container.userRecipePageEdit{
+  grid-template-columns: 1fr 3fr;
+}
