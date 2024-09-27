@@ -37,7 +37,7 @@ const RecipeTab = () => {
 
       <div className='card-container '>
         {recipes.map((recipe, index) => (
-          <div className="recipe-content card">
+          <div className="card">
             <img src={food}/>
             <div className='card-content'>             
               <Link to={`/recipe/${recipe.id}`} key={index}>{recipe.name}<br/></Link>

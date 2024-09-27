@@ -64,7 +64,6 @@ def postUser(request):
 @api_view(['GET'])
 def getUserRecipes(request, pk):
     if request.method == "GET":
-        print("HEREE")
         user = User.objects.get(id=pk)
         recipes = Recipe.objects.filter(user=user)
         seralizer = RecipeSerializer(recipes, many=True)

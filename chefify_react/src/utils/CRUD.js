@@ -30,7 +30,6 @@ export const postUser = async(csrfToken, e) => {
 };
 
 export const getUserRecipes = async (userId, authTokens, csrfToken) =>{
-    console.log("bitch ass")
     let response = await fetch(`api/user/recipes/${userId}`, {
         method: 'GET',
         headers:{
@@ -61,8 +60,7 @@ export const getCategories = async (authTokens, csrfToken) => {
 
 // Ingredient Unit
 
-export const submitIngredientUnitForm = async (e, authTokens, formData, componentId, csrfToken) => {
-    e.preventDefault();
+export const submitIngredientUnitForm = async (authTokens, formData, componentId, csrfToken) => {
     let response = await fetch(`/api/recipe-components/${componentId}/ingredient-unit`,{
         method: "POST",
         headers:{
