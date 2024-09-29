@@ -269,6 +269,18 @@ def manageIngredientUnit(request, pk):
         except:
             return Response({"message": "Recipe Components could not be found."}, status=status.HTTP_404_NOT_FOUND)
 
+@api_view(["DELETE"])
+def deleteIngredientUnit(request, pk, sk):
+    if request.method == "DELETE":
+        try:
+            component = RecipeComponents.objects.get(id=pk)
+            ingredient = IngredientUnit.objects.get(id=sk)
+            component.ingredientsList.remove(ingredient)
+            ingredient.delete()
+            return Response({"message": "Ingredient was added to recipe component."}, status=status.HTTP_200_OK)
+        except:
+            return Response({"message": "Recipe Components could not be found."}, status=status.HTTP_404_NOT_FOUND)
+
 # Messages (pk = recipe.id) --> All messages in recipe
 @api_view(["POST", "GET"])
 def manageMessages(request, pk):

@@ -67,3 +67,56 @@
 .highlight-bg{
     background-color: red;
 }
+
+/* Input Field - Create Ingredient Unit Form */
+
+#createUnitForm{
+    background-color: var(--color-dark);
+    display: grid;
+    grid-template-columns: 4fr 1fr;
+    margin-top: 1rem;
+    padding:0.3rem;
+    gap: 10px;
+}
+
+#createUnitForm *{
+    padding: 0.3rem;
+}
+
+.createUnitForm-width{
+    width: 380px;
+}
+
+/* Input Field - Ingredient Unit Form */
+
+#ingredientUnitForm{
+    padding: 0.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+#ingredientUnitForm *{
+    padding:0.3rem;
+}
+
+.ingredientUnitFormField{
+    background-color: var(--color-dark-light);
+    color: var(--color-text);
+}
+
+.ingredientUnitFormField::placeholder{
+    color:white;
+    opacity: 0.75;
+}
+
+.ingredientUnitFormField:hover,
+.ingredientUnitFormField:focus{
+    background-color: var(--color-bg);
+}
+
+.ingredientUnit:hover{
+    background-color:var(--color-bg)
+}
+
+

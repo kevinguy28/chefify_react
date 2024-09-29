@@ -57,6 +57,26 @@ body{
   background-color: #32373b;
 }
 
+input{
+  background: none; /* Remove background */
+  border: none;     /* Remove border */
+  box-shadow: none; /* Remove box shadow */
+}
+
+h1{
+  font-size: 1.4rem;
+}
+
+.del-btn{
+  color: rgb(240, 0, 0);
+  font-weight: 500;
+  float:right
+}
+
+.del-btn:hover{
+  color:  rgba(240, 0, 0, 0.541);
+}
+
 /* Container */
 
 .container{
@@ -97,16 +117,6 @@ body{
 .content-section{
   display: grid;
   grid-template-columns: 1fr 7fr 2fr;
-}
-
-input{
-  background: none; /* Remove background */
-  border: none;     /* Remove border */
-  box-shadow: none; /* Remove box shadow */
-}
-
-h1{
-  font-size: 1.4rem;
 }
 
 /* Utility */

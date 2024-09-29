@@ -58,7 +58,7 @@ export const getCategories = async (authTokens, csrfToken) => {
     return {categoriesData};
 };
 
-// Ingredient Unit
+// Ingredient Unit Form
 
 export const submitIngredientUnitForm = async (authTokens, formData, componentId, csrfToken) => {
     let response = await fetch(`/api/recipe-components/${componentId}/ingredient-unit`,{
@@ -72,7 +72,20 @@ export const submitIngredientUnitForm = async (authTokens, formData, componentId
         body: JSON.stringify(formData)
     });
     
-    return response
+    return response;
+};
+
+export const deleteIngredientUnit = async(authTokens, componentId, ingredientUnitId, csrfToken) => {
+    let response = await fetch(`/api/recipe-components/${componentId}/ingredient-unit/${ingredientUnitId}`, {
+        method: "DELETE",
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + String(authTokens?.access),
+            'X-CSRFToken': csrfToken,
+        },
+        credentials: 'include',
+    });
+    return response;
 };
 
 
@@ -193,8 +206,7 @@ export const deleteReview = async(authTokens, reviewId, csrfToken) =>{
 };
 // Recipe Components
 
-export const submitRecipeComponentForm = async (e, authTokens, formData, recipeId, csrfToken) =>{
-    e.preventDefault();
+export const submitRecipeComponentForm = async (authTokens, formData, recipeId, csrfToken) =>{
     let response = await fetch(`/api/recipe-components/${recipeId}/`,{
         method: "POST",
         headers:{

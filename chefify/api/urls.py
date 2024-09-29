@@ -23,6 +23,7 @@ urlpatterns = [
     path('recipe/<str:pk>/', views.manageRecipe, name="manageRecipe"),
     path('recipe-components/<str:pk>/', views.manageRecipeComponents, name="manageRecipeComponents"),
     path('recipe-components/<str:pk>/ingredient-unit', views.manageIngredientUnit, name="manageIngredientUnit"),
+    path('recipe-components/<str:pk>/ingredient-unit/<str:sk>/', views.deleteIngredientUnit, name="deleteIngredientUnit"),
     path('review/', views.postReview, name="postReview"),
     path('review/user-review/<str:pk>/<str:sk>/', views.getReviewUser, name="getReviewUser"),
     path('review/<str:pk>/', views.manageReview, name="manageReview"),

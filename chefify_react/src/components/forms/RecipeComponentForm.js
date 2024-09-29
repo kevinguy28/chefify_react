@@ -79,9 +79,9 @@ const RecipeComponentForm = () => {
                 </form>
                 
                 {recipeComponents.map((component, index) => (
-                    <form method="POST" class="component-add" key={index}>
-                        <input class="input_style" type="number" min="0" step="any"  name="quantityInput" placeholder="Quantity" onChange={handleChange}/>
-                        <select class="input_style" name="unitInput" onChange={handleChange}>
+                    <form method="POST" key={index}>
+                        <input  type="number" min="0" step="any"  name="quantityInput" placeholder="Quantity" onChange={handleChange}/>
+                        <select  name="unitInput" onChange={handleChange}>
                             <option value="tbsp">Tablespoon</option>
                             <option value="tsp">Teaspoon</option>
                             <option value="cup">Cup</option>
@@ -93,8 +93,8 @@ const RecipeComponentForm = () => {
                             <option value="pinch">Pinch</option>
                             <option value="dash">Dash</option>
                         </select>
-                        <input class="input_style" type="text" name="ingredientInput" placeholder="Add Ingredient" pattern="[A-Za-z]+" onChange={handleChange}/>
-                        <input class="input_style" type="submit" value="Submit" onClick={() => handleClick(component)}/>
+                        <input type="text" name="ingredientInput" placeholder="Add Ingredient" pattern="[A-Za-z]+" onChange={handleChange}/>
+                        <input type="submit" value="Submit" onClick={() => handleClick(component)}/>
                     </form>
                 ))}
             </div>
