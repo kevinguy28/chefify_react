@@ -115,7 +115,7 @@ const RecipePage = () => {
     if(load){
       let csrfToken = getCsrfToken();
 
-      let {stepsData} = await getSteps(authTokens, recipeId);
+      let {stepsData} = await getSteps(authTokens, csrfToken, recipeId);
       let {recipeComponentsData} = await getRecipeComponents(authTokens, recipeId, csrfToken);
       let {recipeData} = await getRecipe(authTokens, recipeId, csrfToken);
       setSteps(stepsData);

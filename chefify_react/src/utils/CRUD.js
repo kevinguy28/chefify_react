@@ -76,7 +76,7 @@ export const submitIngredientUnitForm = async (authTokens, formData, componentId
 };
 
 export const deleteIngredientUnit = async(authTokens, componentId, ingredientUnitId, csrfToken) => {
-    let response = await fetch(`/api/recipe-components/${componentId}/ingredient-unit/${ingredientUnitId}`, {
+    let response = await fetch(`/api/recipe-components/${componentId}/ingredient-unit/${ingredientUnitId}/`, {
         method: "DELETE",
         headers:{
             'Content-Type': 'application/json',
@@ -312,14 +312,29 @@ export const getMessages = async (authTokens, recipeId, page, csrfToken) => {
 
 // Steps
 
-export const getSteps = async (authTokens, recipeId) => {
+export const getSteps = async (authTokens, csrfToken, recipeId) => {
     let response = await fetch(`/api/steps/${recipeId}`, {
       method: 'GET',
       headers:{
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + String(authTokens?.access),
+        'X-CSRFToken': csrfToken,
       }
     });
     let stepsData = await response.json();
     return {stepsData};
+};
+
+export const postSteps = async (authTokens, csrfToken, formData, recipeId) =>{
+    let response = await fetch(`/api/steps/${recipeId}/`, {
+        method: "POST",
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + String(authTokens?.access),
+            'X-CSRFToken': csrfToken,
+        },
+        credentials: 'include',
+        body: JSON.stringify(formData)
+    });
+    return response
 };

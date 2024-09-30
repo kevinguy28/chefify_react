@@ -119,4 +119,27 @@
     background-color:var(--color-bg)
 }
 
+.tmp2{
+    background-color: blue;
+}
 
+.tmp3{
+    background-color: green;
+}
+
+.textarea {
+  width: 100%;         
+  min-height: 300px;     
+  resize: none;
+  margin: 0;             
+  padding: 10px;         
+}
+
+.stepsCard{
+    background-color: var(--color-dark);
+    padding: 1rem;
+    margin: 0.5rem 0;
+    border-radius: 8px;
+}
+
+/* drag*/
