@@ -204,7 +204,7 @@ def manageReview(request, pk):
     return Response({"message": "Step was created"}, status=status.HTTP_200_OK) 
 
 # Steps (pk = recipe.id) --> Steps of Recipe
-@api_view(['POST', 'GET'])
+@api_view(['POST', 'GET', 'DELETE'])
 def manageSteps(request, pk):
     data = request.data
     if request.method == "POST":
@@ -231,9 +231,35 @@ def manageSteps(request, pk):
             return Response(serializer.data)
         except:
             return Response({"message": "Steps could not be found."}, status=status.HTTP_404_NOT_FOUND)
+    elif request.method == "DELETE":
+        try:
+            step = Steps.objects.get(id=pk)
+            step.delete()
+            return Response({"message" : "Step was deleted."}, status=status.HTTP_200_OK)
+        except:
+            return Response({"message": "Steps could not be found."}, status=status.HTTP_404_NOT_FOUND)
 
+@api_view(['PUT'])
+def putStepsSwap(request, pk, sk):
+    if request.method == "PUT":
+        try:
+            step1 = Steps.objects.get(id=pk)
+            step2 = Steps.objects.get(id=sk)
+            print(step1.order)
+            print(step2.order)
+            orderTmp = step1.order
+            step1.order = step2.order
+            step2.order = orderTmp
+            step1.save()
+            step2.save()
+            print(step1.order)
+            print(step2.order)
+            print("-----------------------")
+            return Response({"message": "Step order was swapped"}, status=status.HTTP_200_OK)
+        except:
+            return Response({"message": "Steps could not be swapped."}, status=status.HTTP_404_NOT_FOUND)
 # Recipe Components (pk = recipe.id) --> Recipe Components of Recipe
-@api_view(['POST', 'GET'])
+@api_view(['POST', 'GET', 'DELETE'])
 def manageRecipeComponents(request, pk):
     data = request.data
     recipe = Recipe.objects.get(id=pk)
@@ -248,6 +274,13 @@ def manageRecipeComponents(request, pk):
             recipeComponents = RecipeComponents.objects.filter(recipe=recipe)
             serializer = RecipeComponentsSerializer(recipeComponents, many=True)
             return Response(serializer.data)
+        except:
+            return Response({"message": "Recipe Components could not be found."}, status=status.HTTP_404_NOT_FOUND)
+    elif request.method == "DELETE":
+        try:
+            recipeComponents = RecipeComponents.objects.get(id=pk)
+            recipeComponents.delete()
+            return Response({"message" : "Component has been deleted"}, status=status.HTTP_200_OK)
         except:
             return Response({"message": "Recipe Components could not be found."}, status=status.HTTP_404_NOT_FOUND)
 

@@ -28,6 +28,7 @@ urlpatterns = [
     path('review/user-review/<str:pk>/<str:sk>/', views.getReviewUser, name="getReviewUser"),
     path('review/<str:pk>/', views.manageReview, name="manageReview"),
     path('steps/<str:pk>/', views.manageSteps, name="manageSteps"),
+    path('steps/<str:pk>/<str:sk>/', views.putStepsSwap, name="putStepsSwap"),
     path('profile/<str:pk>/', views.manageProfile, name="manageProfile"),
     path('messages/<str:pk>/', views.manageMessages, name="manageMessages"),
 ]

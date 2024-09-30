@@ -60,7 +60,7 @@ export const getCategories = async (authTokens, csrfToken) => {
 
 // Ingredient Unit Form
 
-export const submitIngredientUnitForm = async (authTokens, formData, componentId, csrfToken) => {
+export const submitIngredientUnitForm = async (authTokens, csrfToken, formData, componentId) => {
     let response = await fetch(`/api/recipe-components/${componentId}/ingredient-unit`,{
         method: "POST",
         headers:{
@@ -75,7 +75,7 @@ export const submitIngredientUnitForm = async (authTokens, formData, componentId
     return response;
 };
 
-export const deleteIngredientUnit = async(authTokens, componentId, ingredientUnitId, csrfToken) => {
+export const deleteIngredientUnit = async(authTokens, csrfToken, componentId, ingredientUnitId) => {
     let response = await fetch(`/api/recipe-components/${componentId}/ingredient-unit/${ingredientUnitId}/`, {
         method: "DELETE",
         headers:{
@@ -235,6 +235,19 @@ export const getRecipeComponents = async (authTokens, recipeId, csrfToken) =>{
     return {recipeComponentsData};
 }
 
+export const deleteRecipeComponent = async (authTokens, csrfToken, componentId) =>{
+    let response = await fetch(`/api/recipe-components/${componentId}/`, {
+        method: "DELETE",
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + String(authTokens?.access),
+            'X-CSRFToken': csrfToken,
+        },
+        credentials: 'include',
+    });
+    return response;
+};
+
 // Profile --> IngredientsList or ShoppingList
 
 export const addList = async (e, user, authTokens, formData, csrfToken) => {
@@ -337,4 +350,30 @@ export const postSteps = async (authTokens, csrfToken, formData, recipeId) =>{
         body: JSON.stringify(formData)
     });
     return response
+};
+
+export const deleteStep = async (authTokens, csrfToken, stepId) =>{
+    let response = await fetch(`/api/steps/${stepId}/`, {
+        method: "DELETE",
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + String(authTokens?.access),
+            'X-CSRFToken': csrfToken,
+        },
+        credentials: 'include',
+    });
+    return response
+};
+
+export const putStepsSwapOrder = async (authTokens, csrfToken, stepId1, stepId2) =>{
+    let response = await fetch(`/api/steps/${stepId1}/${stepId2}/`, {
+        method: "PUT",
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + String(authTokens?.access),
+            'X-CSRFToken': csrfToken,
+        },
+        credentials: 'include',
+    })
+    return response;
 };
