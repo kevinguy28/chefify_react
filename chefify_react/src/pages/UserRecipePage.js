@@ -2,13 +2,13 @@ import React, {useState, useEffect, useContext} from 'react';
 import {Link} from 'react-router-dom';
 import {closestCorners, DndContext} from '@dnd-kit/core';
 import {arrayMove, SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable";
-import { useSortable } from '@dnd-kit/sortable';
 import Step from "./Step";
 
 import AuthContext from '../context/AuthContext';
 import { getUserRecipes, getRecipeComponents, submitRecipeComponentForm, submitIngredientUnitForm, deleteIngredientUnit, getSteps, postSteps, putStepsSwapOrder, deleteStep, deleteRecipeComponent} from '../utils/CRUD';
 import { capitalize, clearForms} from '../utils/Functions';
 
+import RecipeForms from '../components/forms/RecipeForms';
 import '../styling/css/userRecipePage.css';
 import food from '../styling/images/a.png';
 
@@ -19,6 +19,7 @@ const UserRecipePage = () => {
     let [userRecipes, setUserRecipes] = useState([]);
     let [recipeComponents, setRecipeComponents] = useState([]);
 
+    let [load, setLoad] = useState(true);
     let [editMode, setEditMode] = useState(false);
     let [recipeId, setRecipeId] = useState(null);
     let [steps, setSteps] = useState([]);
@@ -115,6 +116,11 @@ const UserRecipePage = () => {
         };
     };
 
+    const changeLoad= () =>{
+        setLoad(true);
+        clearForms();
+    };
+
     const handleSubmit = async (e) =>{
         e.preventDefault();
         let csrfToken = getCsrfToken();
@@ -175,8 +181,11 @@ const UserRecipePage = () => {
     };
 
     useEffect( () => {
-        fetchUserRecipes();
-    }, [editMode, recipeComponents, steps]);
+        if(load){
+            fetchUserRecipes();
+            setLoad(false);
+        };
+    }, [load, editMode, recipeComponents, steps]);
 
     return (
         <div className={`page-container ${editMode ? "userRecipePageEdit" : "userRecipePage"}`}>
@@ -193,9 +202,9 @@ const UserRecipePage = () => {
                     </div>
                 ))}
             </div>
-            <div className='tmp2'>
+            <div className={`${editMode ? "tmp6alt" : "tmp6 sticky"}`}>
                 <div className={`${editMode ? "hide" : ""}`}>
-                    Idk what I'm putting here
+                   <RecipeForms onSubmit={changeLoad}/>
                 </div>
                 <div className={`${editMode ? "card-container" : "hide"}`}>
 

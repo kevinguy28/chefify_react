@@ -4,9 +4,7 @@ import { useNavigate} from 'react-router-dom';
 import { getCategories, createRecipe } from '../../utils/CRUD'; 
 
 
-const RecipeForms = () => {
-
-    const navigate = useNavigate();
+const RecipeForms = ({onSubmit}) => {
 
     let {authTokens, user, getCsrfToken} = useContext(AuthContext);
 
@@ -19,10 +17,12 @@ const RecipeForms = () => {
     let [categories, setCategories] = useState([]);
 
     const submitForm = async (e) =>{
-        let csrfToken = getCsrfToken();
         e.preventDefault()
-        createRecipe(authTokens, formData, csrfToken);
-        navigate("/")
+        let csrfToken = getCsrfToken();
+        let response = await createRecipe(authTokens, formData, csrfToken);
+        if(response.status === 200){
+          onSubmit();  
+        };
     }
 
     const handleChange = (e) =>{
@@ -46,7 +46,7 @@ const RecipeForms = () => {
 
     return (
         <div>
-            <form>
+            <form className="tmp5" onSubmit={submitForm}>
                 <input className="input" type="text" name="nameRecipe" placeholder='Name of Recipe ...'  onChange={handleChange}/>
                 <select name="selectCategory" onChange={handleChange}>
                     <option key="N/A">N/A</option>
@@ -61,7 +61,8 @@ const RecipeForms = () => {
                     <option key={"public"}>Public</option>
                     <option key={"friends"}>Friends</option>
                 </select>
-                <input type="submit" value="Submit" onClick={submitForm}/>
+                <textarea className="tmp7" name="review_text" rows="20" cols="60" placeholder='Descripition'></textarea>
+                <input type="submit" value="Submit"/>
             </form>
 
             
