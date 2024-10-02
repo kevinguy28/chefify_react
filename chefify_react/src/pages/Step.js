@@ -20,9 +20,14 @@ const Step = ({order, title, description, id, index}) => {
 
     return (
         <div key={index} ref={setNodeRef} style={style} className='container stepsCard'>
-            <h1 {...attributes} {...listeners} className="header-font-size">Step {index+1} {title && <span> - {title}</span>}</h1>
-            <span data-step-id={id} data-type-del="step" className="del-btn" onClick={handleDelete}>DEL</span><hr/>
-            <p className="stepsDescription">{description}</p>
+            <div {...attributes} {...listeners}>
+                <h1 className="header-font-size">Step {index+1} {title && <span> - {title}</span>}</h1>
+                <hr/>
+                <p className="stepsDescription">{description}</p>
+            </div>
+            <div>
+                <span data-step-id={id} data-type-del="step" className="del-btn" onClick={handleDelete}>DEL</span>
+            </div>
         </div>
     )
 }
