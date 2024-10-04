@@ -65,6 +65,13 @@
 /* Highlight background section 1*/
 
 .highlight-bg{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-height: 100vh;
+    position: sticky;
+    top: 0; /* Stick to the top of the viewport */
+    gap: 1rem;
     background-color: red;
 }
 

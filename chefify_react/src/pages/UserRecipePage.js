@@ -30,6 +30,7 @@ const UserRecipePage = () => {
         "quantity": "",
         "user_id": user.user_id,
         "description": "",
+        "recipe_description": "",
     });
 
     const getTaskPos = order => steps.findIndex(step => step.order === order)
@@ -113,6 +114,11 @@ const UserRecipePage = () => {
             setFormData({...formData, 
                 "description": e.target.value
             });
+        }else if (e.target.name === "recipeDescription"){
+            setFormData({
+                ...formData,
+                "recipe_description": e.target.value
+            });
         };
     };
 
@@ -192,7 +198,7 @@ const UserRecipePage = () => {
 
     return (
         <div className={`page-container ${editMode ? "userRecipePageEdit" : "userRecipePage"}`}>
-            <div className={`${editMode ? "highlight-bg" : "card-container"}`}>
+            <div className={`${editMode ? "highlight-bg " : "card-container"}`}>
                 {userRecipes.map((recipe, index) => (
                     <RecipeCard changeMode={changeMode} index={index} editMode={editMode} recipe={recipe} recipeId={recipeId}/>
                 ))}
@@ -201,6 +207,12 @@ const UserRecipePage = () => {
                 <RecipeForm onSubmit={changeLoad}/>
             </div>
             <div className={`${editMode ? "display-column" : "hide"}`}>
+                <div className='createUnitForm-width'>
+                    <form id="createUnitForm"method="post" onSubmit={handleSubmit}>
+                        <input className="ingredientUnitFormField" name="componentInput" placeholder="Add a new recipe component ... " onChange={handleChange}/>
+                        <input className="ingredientUnitFormField" type="submit" value="Submit"/>
+                    </form>
+                </div>
                 {recipeComponents.map((component, index) => (
                     <RecipeComponentCard index={index} component={component} handleDelete={handleDelete} handleChange={handleChange} handleSubmit={handleSubmit}/>
                 ))}
