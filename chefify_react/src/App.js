@@ -6,7 +6,7 @@ import {
 
 import './App.css';
 import Header from './components/Header';
-import RecipeForms from './components/forms/RecipeForms';
+import RecipeForm from './components/forms/RecipeForm';
 
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -31,9 +31,6 @@ function App() {
             <Routes>
               <Route path='/' element={<PrivateRoute />}>
                 <Route path='/' element={<HomePage />}/>
-              </Route>
-              <Route path='/recipe/form' element={<PrivateRoute />}>
-                <Route path='/recipe/form' element={<RecipeForms />}/>
               </Route>
               <Route path='/recipe/:recipeId' element={<PrivateRoute />}>
                 <Route path='/recipe/:recipeId' element={<RecipePage />}/>

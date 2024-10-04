@@ -3,8 +3,10 @@ import AuthContext from "../../context/AuthContext";
 import { useNavigate} from 'react-router-dom';
 import { getCategories, createRecipe } from '../../utils/CRUD'; 
 
+import "../../styling/css/recipeForm.css";
 
-const RecipeForms = ({onSubmit}) => {
+
+const RecipeForms = ({editMode, onSubmit}) => {
 
     let {authTokens, user, getCsrfToken} = useContext(AuthContext);
 
@@ -45,8 +47,9 @@ const RecipeForms = ({onSubmit}) => {
     }, []);
 
     return (
-        <div>
-            <form className="tmp5" onSubmit={submitForm}>
+        <div className='recipeForm'>
+            <h1>Create Recipe<hr/></h1>
+            <form onSubmit={submitForm}>
                 <input className="input" type="text" name="nameRecipe" placeholder='Name of Recipe ...'  onChange={handleChange}/>
                 <select name="selectCategory" onChange={handleChange}>
                     <option key="N/A">N/A</option>
@@ -61,11 +64,9 @@ const RecipeForms = ({onSubmit}) => {
                     <option key={"public"}>Public</option>
                     <option key={"friends"}>Friends</option>
                 </select>
-                <textarea className="tmp7" name="review_text" rows="20" cols="60" placeholder='Descripition'></textarea>
+                <textarea name="review_text" rows="20" cols="60" placeholder='Descripition'></textarea>
                 <input type="submit" value="Submit"/>
             </form>
-
-            
         </div>
     )
 }

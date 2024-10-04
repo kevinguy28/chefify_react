@@ -1,0 +1,37 @@
+/* Create Recipe */
+
+.recipeForm form{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 0 auto;
+    width: 90%;
+    background-color: var(--color-dark);
+    color: var(--color-text);
+}
+
+.recipeForm form *{
+    background-color: var(--color-dark-light);
+    padding: 0.3rem;
+}
+
+.recipeForm form *:hover,
+.recipeForm form *:focus{
+    background-color: var(--color-bg);
+}
+
+.tmp6alt{
+    background-color:var(--color-bg);
+    color:var(--color-text)
+}
+
+.recipeForm textarea{
+    background: var(--color-dark);
+    margin: 10px 0;
+    padding: 10px;
+    border:none;
+    border-radius: 4px;
+    box-shadow: 0 0 0 0.5px #0003;
+    resize: none;
+    width: 100%;
+}

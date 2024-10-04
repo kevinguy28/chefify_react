@@ -40,7 +40,7 @@ class Recipe(models.Model):
     privacy = models.CharField(max_length=15, choices=STATUS_CHOICES, default='private')
     rating = models.DecimalField(max_digits=2, decimal_places=1,choices=RATING_CHOICES,validators=[MinValueValidator(0.0), MaxValueValidator(5.0)], default=0.0)
     reviewers = models.ManyToManyField(User, blank=True, related_name="reviewed_recipes")
-    description = models.TextField(max_length=400, blank=True)
+    description = models.TextField(max_length=200, blank=True)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
@@ -50,7 +50,6 @@ class Recipe(models.Model):
         total_reviews = self.reviewers.count()
         print(total_reviews)
         if total_reviews > 0:
-            print("xxx")
             sum_ratings = reviews.aggregate(total=models.Sum('rating'))['total']
             print(sum_ratings)
             average = round((sum_ratings / total_reviews) * 2) / 2  # Round to the nearest 0.
