@@ -14,24 +14,16 @@ const RecipeCard = ({changeMode, index, editMode, recipe, recipeId}) => {
     return description;
   };
 
-  const handleInput = (event) => {
-    const textarea = event.target;
-    // Reset the height to 'auto' to shrink it if necessary
-    textarea.style.height = 'auto';
-    // Set the height to its scrollHeight
-    textarea.style.height = `${textarea.scrollHeight}px`;
-    // Update the value state
-  };
 
   return (
-    <div className={`card ${editMode && recipeId !== recipe.id ? "hide" : "x"}`}>
+    <div className={`card ${editMode && recipeId !== recipe.id ? "hide" : ""}`}>
         <img src={food}/>
         <div className='card-content'>             
             <Link className="card-link" to={`/recipe/${recipe.id}`} key={index}>{recipe.name}</Link><br/>
             Status: <span className={`${recipe.privacy === "public" ? "card-status-public" : recipe.privacy === "private" ? "card-status-private" : "card-status-friends"}`}>{capitalize(recipe.privacy)}</span>
             <span className="card-edit" data-recipe-id={recipe.id} onClick={changeMode}><u>Edit</u></span><br/><hr />
-            <form className={`${editMode ? "xxx" : "hide"}`}>
-              <textarea onChange={handleInput} className='txt' row="6">{recipe.description}</textarea>
+            <form className={`${editMode ? "" : "hide"}`}>
+              <textarea className='txt' row="6">{recipe.description}</textarea>
             </form>
             <p className={`${editMode ? "hide" : ""}`}>{formatDescription(recipe.description)}</p>
         </div>

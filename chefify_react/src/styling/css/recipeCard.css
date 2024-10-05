@@ -7,17 +7,5 @@
     box-shadow: 0 0 0 0.5px #0003;
     resize: none;
     width: 100%;
-    overflow: hidden;
-}
-
-.xxx{
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    background-color: blue;
-}
-
-.x{
-    height: 100%;
-    background-color: yellow;
+    height: 150px;
 }
