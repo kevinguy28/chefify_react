@@ -145,6 +145,7 @@ const UserRecipePage = () => {
         }else if(e.target.id === "stepsForm"){
             let response = await postSteps(authTokens, csrfToken, formData, recipeId);
             if(response.status === 200){
+                console.log(response)
                 fetchUserSteps(recipeId);
                 setFormData({"name": "", "ingredient": "", "unit": "tbsp", "quantity": "", "user_id": user.user_id, "description": "",});
             };
@@ -198,9 +199,17 @@ const UserRecipePage = () => {
 
     return (
         <div className={`page-container ${editMode ? "userRecipePageEdit" : "userRecipePage"}`}>
-            <div className={`${editMode ? "highlight-bg " : "card-container"}`}>
+            <div className={`${editMode ? "recipe-section" : "card-container"}`}>
                 {userRecipes.map((recipe, index) => (
-                    <RecipeCard changeMode={changeMode} index={index} editMode={editMode} recipe={recipe} recipeId={recipeId}/>
+                    <>
+                        <RecipeCard changeMode={changeMode} index={index} editMode={editMode} recipe={recipe} recipeId={recipeId}/>
+                        <div className={`ass ${editMode ? "" : "hide"} ${editMode && recipeId !== recipe.id ? "hide" : ""}`}>
+                            <form id="stepsForm" onSubmit={handleSubmit}>  
+                                <textarea className="textarea" name="stepsText"  onChange={handleChange}></textarea>
+                                <input type="submit" value="Submit"/>
+                            </form>
+                        </div>
+                    </>
                 ))}
             </div>
             <div className={`${editMode ? "hide" : "recipeForm"}`}>
@@ -218,10 +227,6 @@ const UserRecipePage = () => {
                 ))}
             </div>
             <div className={`tmp3 ${editMode ? "" : "hide"}`}>
-                <form id="stepsForm" onSubmit={handleSubmit}>  
-                    <textarea className="textarea" name="stepsText"  onChange={handleChange}></textarea>
-                    <input type="submit" value="Submit"/>
-                </form>
                 <DndContext collisionDetection={closestCorners} onDragEnd={handleDragEnd}>
                     <div className='card-container'>
                         <SortableContext items={steps} strategy={verticalListSortingStrategy}>

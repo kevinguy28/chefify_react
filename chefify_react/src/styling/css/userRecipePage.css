@@ -64,15 +64,15 @@
 
 /* Highlight background section 1*/
 
-.highlight-bg{
+.recipe-section{
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-height: 100vh;
+    max-height: 90vh;
     position: sticky;
-    top: 0; /* Stick to the top of the viewport */
+    top: 3.5rem;
     gap: 1rem;
-    background-color: red;
+    background-color: var(--color-bg);
 }
 
 /* Input Field - Create Ingredient Unit Form */
@@ -127,8 +127,7 @@
 }
 
 .textarea {
-  width: 100%;         
-  min-height: 300px;     
+  width: 100%;            
   resize: none;
   margin: 0;             
   padding: 10px;     
@@ -154,4 +153,10 @@
     top: 0; /* Stick to the top of the viewport */
     gap: 1rem;
     background-color: var(--color-dark);
+}
+
+.ass{
+    background-color: black;
+    width: 90%;
+    height: 25%;
 }
