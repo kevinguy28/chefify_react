@@ -32,6 +32,7 @@ const UserRecipePage = () => {
         "description": "",
         "recipe_description": "",
         "step_description": "",
+        "step_title": ""
     });
 
     const getTaskPos = order => steps.findIndex(step => step.order === order)
@@ -124,7 +125,24 @@ const UserRecipePage = () => {
                 ...formData,
                 "step_description": e.target.value
             });
+        }else if(e.target.name === "stepTitle"){
+            setFormData({
+                ...formData,
+                "step_title": e.target.value
+            });
         };
+    };
+
+    const onFocus = () =>{
+        let stepTitle = document.getElementById("stepTitleTextArea").value
+        let stepDescription = document.getElementById("stepDescriptionTextArea").value
+        console.log(stepTitle)
+        console.log(stepDescription)
+        setFormData({
+            ...formData,
+            "step_description": stepDescription,
+            "step_title": stepTitle
+        });
     };
 
     const changeLoad= () =>{
@@ -159,12 +177,12 @@ const UserRecipePage = () => {
 
     const handleSave = async (e) =>{
         e.preventDefault();
-        console.log(e.target.id)
         let csrfToken = getCsrfToken();
         if(e.target.id === "stepsFormSave"){
             let stepId = e.target.getAttribute("data-step-id");
             let response = await putStep(authTokens, csrfToken, formData, stepId);
             if(response.status === 200){
+                alert("Step has been saved.")
                 fetchUserSteps(recipeId);
                 resetFormData();
             };
@@ -206,7 +224,7 @@ const UserRecipePage = () => {
     };
 
     const resetFormData = () =>{
-        setFormData({"name": "", "ingredient": "", "unit": "tbsp", "quantity": "", "user_id": user.user_id, "description": "", "recipe_description": "", "step_description": "",});
+        setFormData({"name": "", "ingredient": "", "unit": "tbsp", "quantity": "", "user_id": user.user_id, "description": "", "recipe_description": "", "step_description": "", "step_title" : ""});
     };
 
     useEffect( () => {
@@ -252,7 +270,7 @@ const UserRecipePage = () => {
                         <SortableContext items={steps} strategy={verticalListSortingStrategy}>
                             <h1>Steps to the recipe</h1>
                             {steps?.map ((step, index) => (
-                                <Step editMode={editMode} handleChange={handleChange} handleDelete={handleDelete} handleSave={handleSave} index={index} step={step} />
+                                <Step editMode={editMode} handleChange={handleChange} handleDelete={handleDelete} handleSave={handleSave} index={index} onFocus={onFocus} step={step} />
                             ))}
                         </SortableContext>
                     </div>

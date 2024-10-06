@@ -4,7 +4,7 @@ import {CSS} from "@dnd-kit/utilities";
 
 import "../styling/css/step.css";
 
-const Step = ({editMode, handleChange, handleDelete, handleSave, index, step}) => {
+const Step = ({editMode, handleChange, handleDelete, handleSave, index, onFocus, step}) => {
 
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable(step.id);
     const textareaRef = useRef(null);
@@ -31,14 +31,16 @@ const Step = ({editMode, handleChange, handleDelete, handleSave, index, step}) =
     }, [stepDescription]); // Re-run the effect when the value changes
 
     return (
-        <div key={index} ref={setNodeRef} style={style} className="container stepsCard">
+        <div key={index} ref={setNodeRef} style={style} className="container stepsCard" onClick={onFocus}>
             <div {...attributes} {...listeners}>
-                <h1 className="header-font-size">Step {index+1} {step.title && <span> - {step.title}</span>}</h1>
+                <div className='xpp'>
+                    <span className='dd'>Step {index+1} -</span><textarea id="stepTitleTextArea" name="stepTitle" className='tt' maxlength="50"  onChange={handleChange}>{step.title}</textarea>
+                </div>
                 <hr/>
-                <textarea name="stepDescription" ref={textareaRef} className={`stepsDescription-textarea ${editMode ? "" : "hide"}`} onChange={(e) => {handleChange(e); adjustHeight(e);}}>{step.description}</textarea>
+                <textarea id="stepDescriptionTextArea" name="stepDescription" ref={textareaRef} className={`stepsDescription-textarea ${editMode ? "" : "hide"}`} onChange={(e) => {handleChange(e); adjustHeight(e);}}>{step.description}</textarea>
             </div>
             <div className='stepCrudControl'>
-                <span id="stepsFormSave" data-step-id={step.id} className='save-btn btn' onClick={handleSave}>SAVE</span>
+                <span id="stepsFormSave" data-step-id={step.id} className='save-btn btn' onClick={(e) => {onFocus(e);handleSave(e);}}>SAVE</span>
                 <span data-step-id={step.id} data-type-del="step" className="del btn" onClick={handleDelete}>DEL</span>
             </div>
         </div>

@@ -232,10 +232,10 @@ def manageSteps(request, pk):
         except:
             return Response({"message": "Steps could not be found."}, status=status.HTTP_404_NOT_FOUND)
     elif request.method == "PUT":
-        print('made it here')
         try:
             step = Steps.objects.get(id=pk)
             step.description = data["step_description"]
+            step.title = data["step_title"]
             step.save()
             return Response({"message": "Step was updated"}, status=status.HTTP_200_OK)
         except:
@@ -254,16 +254,11 @@ def putStepsSwap(request, pk, sk):
         try:
             step1 = Steps.objects.get(id=pk)
             step2 = Steps.objects.get(id=sk)
-            print(step1.order)
-            print(step2.order)
             orderTmp = step1.order
             step1.order = step2.order
             step2.order = orderTmp
             step1.save()
             step2.save()
-            print(step1.order)
-            print(step2.order)
-            print("-----------------------")
             return Response({"message": "Step order was swapped"}, status=status.HTTP_200_OK)
         except:
             return Response({"message": "Steps could not be swapped."}, status=status.HTTP_404_NOT_FOUND)
