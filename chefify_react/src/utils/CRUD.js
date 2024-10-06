@@ -365,6 +365,20 @@ export const deleteStep = async (authTokens, csrfToken, stepId) =>{
     return response
 };
 
+export const putStep = async (authTokens, csrfToken, formData, stepId) =>{
+    let response = await fetch(`/api/steps/${stepId}/`, {
+        method: "PUT",
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + String(authTokens?.access),
+            'X-CSRFToken': csrfToken,
+        },
+        credentials: 'include',
+        body: JSON.stringify(formData)
+    })
+    return response
+};
+
 export const putStepsSwapOrder = async (authTokens, csrfToken, stepId1, stepId2) =>{
     let response = await fetch(`/api/steps/${stepId1}/${stepId2}/`, {
         method: "PUT",

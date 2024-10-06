@@ -23,7 +23,7 @@ const RecipeCard = ({changeMode, index, editMode, recipe, recipeId}) => {
             Status: <span className={`${recipe.privacy === "public" ? "card-status-public" : recipe.privacy === "private" ? "card-status-private" : "card-status-friends"}`}>{capitalize(recipe.privacy)}</span>
             <span className="card-edit" data-recipe-id={recipe.id} onClick={changeMode}><u>Edit</u></span><br/><hr />
             <form className={`${editMode ? "" : "hide"}`}>
-              <textarea className='txt' row="6">{recipe.description}</textarea>
+              <textarea className='card-textarea' row="6">{recipe.description}</textarea>
             </form>
             <p className={`${editMode ? "hide" : ""}`}>{formatDescription(recipe.description)}</p>
         </div>

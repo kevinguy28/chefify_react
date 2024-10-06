@@ -6,71 +6,12 @@
     flex-wrap: wrap;
 }
 
-.card{
-    width:380px;
-    background-color: var(--color-dark);
-    border-radius: 8px;
-    overflow:hidden;
-    box-shadow: 0px 2px 4px rgba(0,0,0,0.2);
-    margin:20px;
-}
-
-.card img{
-    width:100%;
-    height: auto;
-}
-
-.card-content{
-    padding:16px;
-}
-
-.card-content p{
-    color:var(--color-text);
-    font-size:1rem;
-    background-color: var(--color-dark);
-}
-
-.card-link{
-    text-decoration: none;
-    font-size: 1.5rem;
-    font-weight: 600;
-}
-
-.card-link:hover,
-.card-edit:hover
-{
-    color: var(--color-text-alt)
-}
-
-.card-edit{
-    float:right;
-    font-weight: 600;
-}
-
-.card-status-public{
-    color:rgb(95, 225, 95);
-    font-weight: 600;
-}
-
-.card-status-private{
-    color:red;
-    font-weight: 600;
-}
-
-.card-status-friends{
-    color:yellow;
-    font-weight: 600;
-}
-
 /* Highlight background section 1*/
 
 .recipe-section{
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-height: 90vh;
-    position: sticky;
-    top: 3.5rem;
     gap: 1rem;
     background-color: var(--color-bg);
 }
@@ -94,46 +35,6 @@
     width: 380px;
 }
 
-/* Input Field - Ingredient Unit Form */
-
-#ingredientUnitForm{
-    padding: 0.5rem;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-}
-
-#ingredientUnitForm *{
-    padding:0.3rem;
-}
-
-.ingredientUnitFormField{
-    background-color: var(--color-dark-light);
-    color: var(--color-text);
-}
-
-.ingredientUnitFormField::placeholder{
-    color:white;
-    opacity: 0.75;
-}
-
-.ingredientUnitFormField:hover,
-.ingredientUnitFormField:focus{
-    background-color: var(--color-bg);
-}
-
-.tmp3{
-    background-color: green;
-}
-
-.textarea {
-  width: 100%;            
-  resize: none;
-  margin: 0;             
-  padding: 10px;     
-  background-color: var(--color-dark);    
-}
-
 .stepsCard{
     background-color: var(--color-dark);
     padding: 1rem;
@@ -155,8 +56,31 @@
     background-color: var(--color-dark);
 }
 
-.ass{
-    background-color: black;
-    width: 90%;
-    height: 25%;
-}
+.textarea {
+    width: 100%;    
+    height:200px;        
+    resize: none;
+    border-radius: 4px;  
+    padding: 10px;     
+    background-color: var(--color-dark-light);    
+  }
+
+  .stepCreationCard{
+    background-color: var(--color-dark);
+    width: 380px;
+    padding: 1rem;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  } 
+
+  .sbt-btn{
+    float: right;
+    padding:0.6rem;
+    background-color: var(--color-dark-light);
+  }
+
+  .sbt-btn:hover{
+    background-color: var(--color-bg);
+  }

@@ -204,7 +204,7 @@ def manageReview(request, pk):
     return Response({"message": "Step was created"}, status=status.HTTP_200_OK) 
 
 # Steps (pk = recipe.id) --> Steps of Recipe
-@api_view(['POST', 'GET', 'DELETE'])
+@api_view(['POST', 'GET', 'PUT', 'DELETE'])
 def manageSteps(request, pk):
     data = request.data
     if request.method == "POST":
@@ -231,6 +231,15 @@ def manageSteps(request, pk):
             return Response(serializer.data)
         except:
             return Response({"message": "Steps could not be found."}, status=status.HTTP_404_NOT_FOUND)
+    elif request.method == "PUT":
+        print('made it here')
+        try:
+            step = Steps.objects.get(id=pk)
+            step.description = data["step_description"]
+            step.save()
+            return Response({"message": "Step was updated"}, status=status.HTTP_200_OK)
+        except:
+            return Response({"message": "Steps could not be updated."}, status=status.HTTP_404_NOT_FOUND)
     elif request.method == "DELETE":
         try:
             step = Steps.objects.get(id=pk)

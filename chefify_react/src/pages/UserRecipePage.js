@@ -6,7 +6,7 @@ import RecipeCard from '../components/card/RecipeCard';
 import RecipeComponentCard from '../components/card/RecipeComponentCard';
 
 import AuthContext from '../context/AuthContext';
-import { getUserRecipes, getRecipeComponents, submitRecipeComponentForm, submitIngredientUnitForm, deleteIngredientUnit, getSteps, postSteps, putStepsSwapOrder, deleteStep, deleteRecipeComponent} from '../utils/CRUD';
+import { getUserRecipes, getRecipeComponents, submitRecipeComponentForm, submitIngredientUnitForm, deleteIngredientUnit, getSteps, postSteps, putStep, putStepsSwapOrder, deleteStep, deleteRecipeComponent} from '../utils/CRUD';
 import { clearForms} from '../utils/Functions';
 
 import RecipeForm from '../components/forms/RecipeForm';
@@ -31,6 +31,7 @@ const UserRecipePage = () => {
         "user_id": user.user_id,
         "description": "",
         "recipe_description": "",
+        "step_description": "",
     });
 
     const getTaskPos = order => steps.findIndex(step => step.order === order)
@@ -51,7 +52,6 @@ const UserRecipePage = () => {
         setSteps((steps) => {
             const originalPos = getTaskPos(activeStep.order);
             const newPos = getTaskPos(overStep.order);
-            console.log(steps)
             doSwap(activeStep.id, overStep.id)
             return arrayMove(steps, originalPos, newPos);
         });
@@ -119,6 +119,11 @@ const UserRecipePage = () => {
                 ...formData,
                 "recipe_description": e.target.value
             });
+        }else if(e.target.name === "stepDescription"){
+            setFormData({
+                ...formData,
+                "step_description": e.target.value
+            });
         };
     };
 
@@ -130,32 +135,43 @@ const UserRecipePage = () => {
     const handleSubmit = async (e) =>{
         e.preventDefault();
         let csrfToken = getCsrfToken();
-        if(e.target.id === "ingredientUnitForm"){
+        if(e.target.id === "recipeComponentForm"){
             let response = await submitIngredientUnitForm(authTokens, csrfToken, formData, e.target.getAttribute("data-component-id"));
             if(response.status === 200){
                 fetchRecipeComponents(recipeId);
-                setFormData({"name": "", "ingredient": "", "unit": "tbsp", "quantity": "", "user_id": user.user_id, "description": "",});
+                resetFormData();
             };
         }else if(e.target.id === "createUnitForm"){
             let response = await submitRecipeComponentForm(authTokens, formData, recipeId, csrfToken);
             if(response.status === 200){
                 fetchRecipeComponents(recipeId);
-                setFormData({"name": "", "ingredient": "", "unit": "tbsp", "quantity": "", "user_id": user.user_id, "description": "",});
+                resetFormData();
             };
         }else if(e.target.id === "stepsForm"){
             let response = await postSteps(authTokens, csrfToken, formData, recipeId);
             if(response.status === 200){
-                console.log(response)
                 fetchUserSteps(recipeId);
-                setFormData({"name": "", "ingredient": "", "unit": "tbsp", "quantity": "", "user_id": user.user_id, "description": "",});
+                resetFormData();
             };
         };
         clearForms();
-    }
+    };
+
+    const handleSave = async (e) =>{
+        e.preventDefault();
+        console.log(e.target.id)
+        let csrfToken = getCsrfToken();
+        if(e.target.id === "stepsFormSave"){
+            let stepId = e.target.getAttribute("data-step-id");
+            let response = await putStep(authTokens, csrfToken, formData, stepId);
+            if(response.status === 200){
+                fetchUserSteps(recipeId);
+                resetFormData();
+            };
+        };
+    };
 
     const changeMode = (e) =>{
-        console.log(e.target)
-        console.log(editMode)
         if(editMode === false){
             fetchRecipeComponents(e.currentTarget.getAttribute("data-recipe-id"));
             fetchUserSteps(e.currentTarget.getAttribute("data-recipe-id"));
@@ -189,12 +205,15 @@ const UserRecipePage = () => {
         };
     };
 
+    const resetFormData = () =>{
+        setFormData({"name": "", "ingredient": "", "unit": "tbsp", "quantity": "", "user_id": user.user_id, "description": "", "recipe_description": "", "step_description": "",});
+    };
+
     useEffect( () => {
         if(load){
             fetchUserRecipes();
             setLoad(false);
         };
-        console.log(editMode)
     }, [load, editMode, recipeComponents, steps]);
 
     return (
@@ -203,10 +222,11 @@ const UserRecipePage = () => {
                 {userRecipes.map((recipe, index) => (
                     <>
                         <RecipeCard changeMode={changeMode} index={index} editMode={editMode} recipe={recipe} recipeId={recipeId}/>
-                        <div className={`ass ${editMode ? "" : "hide"} ${editMode && recipeId !== recipe.id ? "hide" : ""}`}>
-                            <form id="stepsForm" onSubmit={handleSubmit}>  
+                        <div className={`${editMode && recipeId === recipe.id ? "stepCreationCard" : "hide"}`}>
+                            <h1>Create Step</h1>
+                            <form className="x" id="stepsForm" onSubmit={handleSubmit}>  
                                 <textarea className="textarea" name="stepsText"  onChange={handleChange}></textarea>
-                                <input type="submit" value="Submit"/>
+                                <input className="sbt-btn" type="submit" value="Submit"/>
                             </form>
                         </div>
                     </>
@@ -226,12 +246,13 @@ const UserRecipePage = () => {
                     <RecipeComponentCard index={index} component={component} handleDelete={handleDelete} handleChange={handleChange} handleSubmit={handleSubmit}/>
                 ))}
             </div>
-            <div className={`tmp3 ${editMode ? "" : "hide"}`}>
+            <div className={`${editMode ? "" : "hide"}`}>
                 <DndContext collisionDetection={closestCorners} onDragEnd={handleDragEnd}>
                     <div className='card-container'>
                         <SortableContext items={steps} strategy={verticalListSortingStrategy}>
+                            <h1>Steps to the recipe</h1>
                             {steps?.map ((step, index) => (
-                                <Step order={step.order} id={step.id} title={step.title} description={step.description} index={index} key={index}/>
+                                <Step editMode={editMode} handleChange={handleChange} handleDelete={handleDelete} handleSave={handleSave} index={index} step={step} />
                             ))}
                         </SortableContext>
                     </div>

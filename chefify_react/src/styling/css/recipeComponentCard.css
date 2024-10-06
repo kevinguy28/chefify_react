@@ -1,0 +1,62 @@
+.recipeComponent{
+    width:380px;
+    background-color: var(--color-dark);
+    border-radius: 8px;
+    overflow:hidden;
+    box-shadow: 0px 2px 4px rgba(0,0,0,0.2);
+    margin:20px;
+}
+
+.recipeComponent img{
+    width:100%;
+    height: auto;
+}
+  
+.recipeComponentForm-container{
+    padding: 0.3rem;
+}
+
+/* Input Field - Ingredient Unit Form */
+
+#recipeComponentForm{
+    padding: 0.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+#recipeComponentForm *{
+    padding:0.3rem;
+}
+
+.recipeComponentFormField{
+    background-color: var(--color-dark-light);
+    color: var(--color-text);
+}
+
+.recipeComponentFormField::placeholder{
+    color:white;
+    opacity: 0.75;
+}
+
+.recipeComponentFormField:hover,
+.recipeComponentFormField:focus{
+    background-color: var(--color-bg);
+}  
+
+.recipeComponentCardHeader{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between; 
+    align-items: center;
+    padding:0.5rem;
+}
+
+.recipeComponentCardHeader .componentName{
+    font-weight: bold;
+    font-size: 1.4rem;
+}
+
+.recipeComponentCardHeader .ingredientUnit{
+    font-size: 1rem;
+}

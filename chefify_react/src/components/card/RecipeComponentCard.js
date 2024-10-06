@@ -1,16 +1,21 @@
 import React from 'react';
 import food from '../../styling/images/a.png';
+import "../../styling/css/recipeComponentCard.css";
+
 
 const RecipeComponent = ({component, index, handleChange, handleDelete, handleSubmit}) => {
   return (
     <div key={component.id} className="recipeComponent">
         <img src={food}/>
-        <h1>{component.name}<span data-component-id={component.id} data-type-del="component" className="del-btn" onClick={handleDelete}>DEL</span> </h1>
-        <div className="ingredientUnits-container">
+        <div className='recipeComponentCardHeader'>
+            <span className='componentName'>{component.name}</span>
+            <span data-component-id={component.id} data-type-del="component" className="btn del" onClick={handleDelete}>DEL</span>
+        </div>
+        <div className="recipeComponentForm-container">
             <hr/>
-            <form id="ingredientUnitForm" data-component-id={component.id} method="POST" key={index} onSubmit={handleSubmit}>
-                <input className="ingredientUnitFormField" type="number" min="0" step="any"  name="quantityInput" placeholder="Quantity" onChange={handleChange}/>
-                <select className="ingredientUnitFormField" name="unitInput" onChange={handleChange}>
+            <form id="recipeComponentForm" data-component-id={component.id} method="POST" key={index} onSubmit={handleSubmit}>
+                <input className="recipeComponentFormField" type="number" min="0" step="any"  name="quantityInput" placeholder="Quantity" onChange={handleChange}/>
+                <select className="recipeComponentFormField" name="unitInput" onChange={handleChange}>
                     <option value="tbsp">Tablespoon</option>
                     <option value="tsp">Teaspoon</option>
                     <option value="cup">Cup</option>
@@ -22,13 +27,15 @@ const RecipeComponent = ({component, index, handleChange, handleDelete, handleSu
                     <option value="pinch">Pinch</option>
                     <option value="dash">Dash</option>
                 </select>
-                <input className="ingredientUnitFormField" type="text" name="ingredientInput" placeholder="Add Ingredient" pattern="[A-Za-z\s]+" onChange={handleChange}/>
-                <input className="ingredientUnitFormField" type="submit" value="Submit"/>
+                <input className="recipeComponentFormField" type="text" name="ingredientInput" placeholder="Add Ingredient" pattern="[A-Za-z\s]+" onChange={handleChange}/>
+                <input className="recipeComponentFormField" type="submit" value="Submit"/>
             </form><hr/>
 
             {component.ingredientsList.map((ingredient) => (
-                <p className="ingredientUnit" key={ingredient.id}>{ingredient.quantity} {ingredient.unit}: {ingredient.ingredient.name} 
-                <span data-component-id={component.id} data-ingredient-id={ingredient.id} data-type-del="ingredient"className="del-btn" onClick={handleDelete}>DEL</span></p>
+                <div className='recipeComponentCardHeader'>
+                    <span className="ingredientUnit" key={ingredient.id}>{ingredient.quantity} {ingredient.unit}: {ingredient.ingredient.name} </span>
+                    <span data-component-id={component.id} data-ingredient-id={ingredient.id} data-type-del="ingredient"className="btn-sml del" onClick={handleDelete}>DEL</span>
+                </div>
             ))}
         </div>
     </div>
