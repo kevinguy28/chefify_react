@@ -4,7 +4,7 @@ import {CSS} from "@dnd-kit/utilities";
 
 import "../styling/css/step.css";
 
-const Step = ({editMode, handleChange, handleDelete, handleSave, index, onFocus, step}) => {
+const Step = ({editStepKey, handleChange, handleDelete, handleSave, index, step, toggleStepEdit}) => {
 
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable(step.id);
     const textareaRef = useRef(null);
@@ -16,9 +16,9 @@ const Step = ({editMode, handleChange, handleDelete, handleSave, index, onFocus,
     };
 
     const adjustHeight = (e) =>{
-        console.log(e.target.value)
         setStepDescription(e.target.value)
-    };
+    }
+
 
     useEffect(() => {
         const textarea = textareaRef.current;
@@ -31,16 +31,20 @@ const Step = ({editMode, handleChange, handleDelete, handleSave, index, onFocus,
     }, [stepDescription]); // Re-run the effect when the value changes
 
     return (
-        <div key={index} ref={setNodeRef} style={style} className="container stepsCard" onClick={onFocus}>
+        <div key={index} ref={setNodeRef} style={style} className="container stepsCard">
             <div {...attributes} {...listeners}>
-                <div className='xpp'>
-                    <span className='dd'>Step {index+1} -</span><textarea id="stepTitleTextArea" name="stepTitle" className='tt' maxlength="50"  onChange={handleChange}>{step.title}</textarea>
+                <div className='stepHeader'>
+                    <span className="child1">Step {index+1}:</span>
+                    <span className={`${editStepKey === index ? "hide" : "child2" }`}>{step.title}</span>
+                    <textarea id={`stepTitleTextArea${index}`} name={`stepTitle${index}`} className={`${editStepKey === index ? "child2" : "hide"}`} maxlength="50"  onChange={handleChange}>{step.title}</textarea>
+                    <span className={`${editStepKey === index ? "hide" : "child1 btn"}`} onClick={(e) => {toggleStepEdit(index, step.id); adjustHeight(e);}}>Edit</span>
                 </div>
                 <hr/>
-                <textarea id="stepDescriptionTextArea" name="stepDescription" ref={textareaRef} className={`stepsDescription-textarea ${editMode ? "" : "hide"}`} onChange={(e) => {handleChange(e); adjustHeight(e);}}>{step.description}</textarea>
+                <p className={`${editStepKey === index ? "hide" : ""}`}>{step.description}</p>
+                <textarea id={`stepDescriptionTextArea${index}`} name={`stepDescription${index}`} ref={textareaRef} className={`${editStepKey === index ? "stepsDescription-textarea" : "hide"}`} onChange={(e) => {handleChange(e); adjustHeight(e);}}>{step.description}</textarea>
             </div>
-            <div className='stepCrudControl'>
-                <span id="stepsFormSave" data-step-id={step.id} className='save-btn btn' onClick={(e) => {onFocus(e);handleSave(e);}}>SAVE</span>
+            <div className={`${editStepKey === index ? "stepCrudControl" : "hide"}`}>
+                <span id={`stepsFormSave${index}`} data-step-id={step.id} className='save-btn btn' onClick={(e) => {handleSave(step.id);}}>SAVE</span>
                 <span data-step-id={step.id} data-type-del="step" className="del btn" onClick={handleDelete}>DEL</span>
             </div>
         </div>

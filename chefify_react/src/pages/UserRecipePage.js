@@ -22,7 +22,9 @@ const UserRecipePage = () => {
     let [load, setLoad] = useState(true);
     let [editMode, setEditMode] = useState(false);
     let [recipeId, setRecipeId] = useState(null);
-    let [steps, setSteps] = useState([]);
+    let [steps, setSteps] = useState([]);    
+    let [editStepKey ,setEditStepKey] = useState(null);
+    let [editStepId, setEditStepId] = useState(null);
     let [formData, setFormData] = useState({
         "name": "",
         "ingredient": "",
@@ -37,26 +39,24 @@ const UserRecipePage = () => {
 
     const getTaskPos = order => steps.findIndex(step => step.order === order)
 
-    const handleDragEnd = (event) =>{
-        const {active, over} = event;
-    
-        // Find the corresponding step from steps using the id
-        const activeStep = steps.find(step => step.id === active.id);
-        const overStep = steps.find(step => step.id === over.id);
-    
-        // Ensure both active and over steps exist
-        if (!activeStep || !overStep) return;
-    
-        // Get their order
-        if (activeStep.order === overStep.order) return;
-    
-        setSteps((steps) => {
-            const originalPos = getTaskPos(activeStep.order);
-            const newPos = getTaskPos(overStep.order);
-            doSwap(activeStep.id, overStep.id)
-            return arrayMove(steps, originalPos, newPos);
-        });
-    }
+    const changeLoad= () =>{
+        setLoad(true);
+        clearForms();
+    };
+
+    const changeMode = (e) =>{
+        if(editMode === false){
+            fetchRecipeComponents(e.currentTarget.getAttribute("data-recipe-id"));
+            fetchUserSteps(e.currentTarget.getAttribute("data-recipe-id"));
+            setRecipeId(parseInt(e.currentTarget.getAttribute("data-recipe-id")));
+            setEditMode(true);
+        }else if(editMode === true){
+            setEditMode(false);
+            setRecipeId(null);
+            setRecipeComponents([]);
+            setSteps([]);
+        }
+    };
 
     const doSwap = async (step1, step2) =>{
         let csrfToken = getCsrfToken()
@@ -64,6 +64,12 @@ const UserRecipePage = () => {
         if(response.status === 200){
             fetchUserSteps(recipeId);
         }
+    };
+
+    const fetchRecipeComponents = async (id) =>{
+        let csrfToken = getCsrfToken();
+        let {recipeComponentsData} = await getRecipeComponents(authTokens, id, csrfToken);
+        setRecipeComponents(recipeComponentsData);
     };
 
     const fetchUserRecipes = async () =>{
@@ -75,13 +81,8 @@ const UserRecipePage = () => {
         }
     };
 
-    const fetchRecipeComponents = async (id) =>{
-        let csrfToken = getCsrfToken();
-        let {recipeComponentsData} = await getRecipeComponents(authTokens, id, csrfToken);
-        setRecipeComponents(recipeComponentsData);
-    };
-
     const fetchUserSteps = async (id) =>{
+        console.log("pop")
         let csrfToken = getCsrfToken();
         let {stepsData} = await getSteps(authTokens, csrfToken, id);
         setSteps(stepsData);
@@ -120,12 +121,14 @@ const UserRecipePage = () => {
                 ...formData,
                 "recipe_description": e.target.value
             });
-        }else if(e.target.name === "stepDescription"){
+        }else if(e.target.name === `stepDescription${editStepKey}`){
+            console.log(e.target.value)
             setFormData({
                 ...formData,
                 "step_description": e.target.value
             });
-        }else if(e.target.name === "stepTitle"){
+        }else if(e.target.name === `stepTitle${editStepKey}`){
+            console.log(e.target.value)
             setFormData({
                 ...formData,
                 "step_title": e.target.value
@@ -133,21 +136,57 @@ const UserRecipePage = () => {
         };
     };
 
-    const onFocus = () =>{
-        let stepTitle = document.getElementById("stepTitleTextArea").value
-        let stepDescription = document.getElementById("stepDescriptionTextArea").value
-        console.log(stepTitle)
-        console.log(stepDescription)
-        setFormData({
-            ...formData,
-            "step_description": stepDescription,
-            "step_title": stepTitle
-        });
+    const handleDelete = async (e) =>{
+        let csrfToken = getCsrfToken();
+        if(e.target.getAttribute("data-type-del") === "component"){
+            let response = await deleteRecipeComponent(authTokens, csrfToken, e.target.getAttribute("data-component-id"));
+            if(response.status === 200){
+                fetchRecipeComponents(recipeId);
+            };
+        }else if(e.target.getAttribute("data-type-del") === "ingredient"){
+            let response = await deleteIngredientUnit(authTokens, csrfToken, e.currentTarget.getAttribute("data-component-id"), e.currentTarget.getAttribute("data-ingredient-id"));
+            if(response.status === 200){
+                fetchRecipeComponents(recipeId);
+            };
+        }else if(e.target.getAttribute("data-type-del") === "step"){
+            let response = await deleteStep(authTokens, csrfToken, e.target.getAttribute("data-step-id"));
+            if(response.status === 200){
+                fetchUserSteps(recipeId)
+            }
+        };
     };
 
-    const changeLoad= () =>{
-        setLoad(true);
-        clearForms();
+    const handleDragEnd = (event) =>{
+        const {active, over} = event;
+    
+        // Find the corresponding step from steps using the id
+        const activeStep = steps.find(step => step.id === active.id);
+        const overStep = steps.find(step => step.id === over.id);
+    
+        // Ensure both active and over steps exist
+        if (!activeStep || !overStep) return;
+    
+        // Get their order
+        if (activeStep.order === overStep.order) return;
+    
+        setSteps((steps) => {
+            const originalPos = getTaskPos(activeStep.order);
+            const newPos = getTaskPos(overStep.order);
+            doSwap(activeStep.id, overStep.id)
+            return arrayMove(steps, originalPos, newPos);
+        });
+    }
+
+    const handleSave = async (stepId) =>{
+        let csrfToken = getCsrfToken();
+        let response = await putStep(authTokens, csrfToken, formData, stepId);
+        if(response.status === 200){
+            console.log("doom")
+            setEditStepKey(null);
+            setEditStepId(null);
+            fetchUserSteps(recipeId);
+            resetFormData();
+        };
     };
 
     const handleSubmit = async (e) =>{
@@ -175,56 +214,26 @@ const UserRecipePage = () => {
         clearForms();
     };
 
-    const handleSave = async (e) =>{
-        e.preventDefault();
-        let csrfToken = getCsrfToken();
-        if(e.target.id === "stepsFormSave"){
-            let stepId = e.target.getAttribute("data-step-id");
-            let response = await putStep(authTokens, csrfToken, formData, stepId);
-            if(response.status === 200){
-                alert("Step has been saved.")
-                fetchUserSteps(recipeId);
-                resetFormData();
-            };
-        };
-    };
-
-    const changeMode = (e) =>{
-        if(editMode === false){
-            fetchRecipeComponents(e.currentTarget.getAttribute("data-recipe-id"));
-            fetchUserSteps(e.currentTarget.getAttribute("data-recipe-id"));
-            setRecipeId(parseInt(e.currentTarget.getAttribute("data-recipe-id")));
-            setEditMode(true);
-        }else if(editMode === true){
-            setEditMode(false);
-            setRecipeId(null);
-            setRecipeComponents([]);
-            setSteps([]);
-        }
-    }
-
-    const handleDelete = async (e) =>{
-        let csrfToken = getCsrfToken();
-        if(e.target.getAttribute("data-type-del") === "component"){
-            let response = await deleteRecipeComponent(authTokens, csrfToken, e.target.getAttribute("data-component-id"));
-            if(response.status === 200){
-                fetchRecipeComponents(recipeId);
-            };
-        }else if(e.target.getAttribute("data-type-del") === "ingredient"){
-            let response = await deleteIngredientUnit(authTokens, csrfToken, e.currentTarget.getAttribute("data-component-id"), e.currentTarget.getAttribute("data-ingredient-id"));
-            if(response.status === 200){
-                fetchRecipeComponents(recipeId);
-            };
-        }else if(e.target.getAttribute("data-type-del") === "step"){
-            let response = await deleteStep(authTokens, csrfToken, e.target.getAttribute("data-step-id"));
-            if(response.status === 200){
-                fetchUserSteps(recipeId)
-            }
-        };
-    };
-
     const resetFormData = () =>{
         setFormData({"name": "", "ingredient": "", "unit": "tbsp", "quantity": "", "user_id": user.user_id, "description": "", "recipe_description": "", "step_description": "", "step_title" : ""});
+    };
+
+    const toggleStepEdit = (key, stepId) =>{
+        if(editStepKey === null){
+            let stepTitle = document.getElementById(`stepTitleTextArea${key}`).value;
+            let stepDescription = document.getElementById(`stepDescriptionTextArea${key}`).value;
+
+            setEditStepId(stepId);
+            setEditStepKey(key);
+            setFormData({
+                ...formData,
+                "step_description": stepDescription,
+                "step_title": stepTitle,
+            });
+        }else if(editStepKey !== key){
+            /* HAVENT SET editStepKey therefore key != editStepkey therefore not showing crud */
+
+        };
     };
 
     useEffect( () => {
@@ -270,7 +279,7 @@ const UserRecipePage = () => {
                         <SortableContext items={steps} strategy={verticalListSortingStrategy}>
                             <h1>Steps to the recipe</h1>
                             {steps?.map ((step, index) => (
-                                <Step editMode={editMode} handleChange={handleChange} handleDelete={handleDelete} handleSave={handleSave} index={index} onFocus={onFocus} step={step} />
+                                <Step  editStepKey={editStepKey} handleChange={handleChange} handleDelete={handleDelete} handleSave={handleSave} index={index} step={step} toggleStepEdit={toggleStepEdit} />
                             ))}
                         </SortableContext>
                     </div>
