@@ -5,8 +5,8 @@ from .models import Categories, Ingredient, Profile, Recipe, Steps, RecipeCompon
 class StepsAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'order', 'recipe', 'user', 'description')  # Include 'id' and other fields to display
 
-admin.site.register(Steps, StepsAdmin)
-
+# admin.site.register(Steps, StepsAdmin)
+admin.site.register(Steps)
 admin.site.register(Categories)
 admin.site.register(Ingredient)
 admin.site.register(Profile)

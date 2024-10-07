@@ -209,7 +209,6 @@ def manageSteps(request, pk):
     data = request.data
     if request.method == "POST":
         try:
-
             recipe = Recipe.objects.get(id=pk)
             user = User.objects.get(id=data["user_id"])
             last_step = Steps.objects.filter(recipe=recipe).order_by('-order').first()
@@ -218,8 +217,10 @@ def manageSteps(request, pk):
             else:
                 last_step= 1
             description = data["description"]
-
-            Steps.objects.create(recipe=recipe,description=description,order=last_step,user=user)
+            title = data["title"]
+            if(len(title) == 0):
+                return Response({"message": "Steps could not be created."}, status=status.HTTP_400_BAD_REQUEST)
+            Steps.objects.create(recipe=recipe,description=description,order=last_step,user=user, title=title)
             return Response({"message": "Step was created"}, status=status.HTTP_200_OK)
         except:
             return Response({"message": "Steps could not be created."}, status=status.HTTP_400_BAD_REQUEST)

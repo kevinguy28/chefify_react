@@ -1,6 +1,4 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {closestCorners, DndContext} from '@dnd-kit/core';
-import {arrayMove, SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable";
 import Step from "./Step";
 import RecipeCard from '../components/card/RecipeCard';
 import RecipeComponentCard from '../components/card/RecipeComponentCard';
@@ -32,12 +30,12 @@ const UserRecipePage = () => {
         "quantity": "",
         "user_id": user.user_id,
         "description": "",
+        "title": "",
         "recipe_description": "",
         "step_description": "",
         "step_title": ""
     });
 
-    const getTaskPos = order => steps.findIndex(step => step.order === order)
 
     const changeLoad= () =>{
         setLoad(true);
@@ -82,7 +80,6 @@ const UserRecipePage = () => {
     };
 
     const fetchUserSteps = async (id) =>{
-        console.log("pop")
         let csrfToken = getCsrfToken();
         let {stepsData} = await getSteps(authTokens, csrfToken, id);
         setSteps(stepsData);
@@ -116,19 +113,21 @@ const UserRecipePage = () => {
             setFormData({...formData, 
                 "description": e.target.value
             });
+        }else if(e.target.name === "stepsTitle"){
+            setFormData({...formData,
+                "title": e.target.value
+            })
         }else if (e.target.name === "recipeDescription"){
             setFormData({
                 ...formData,
                 "recipe_description": e.target.value
             });
         }else if(e.target.name === `stepDescription${editStepKey}`){
-            console.log(e.target.value)
             setFormData({
                 ...formData,
                 "step_description": e.target.value
             });
         }else if(e.target.name === `stepTitle${editStepKey}`){
-            console.log(e.target.value)
             setFormData({
                 ...formData,
                 "step_title": e.target.value
@@ -156,32 +155,10 @@ const UserRecipePage = () => {
         };
     };
 
-    const handleDragEnd = (event) =>{
-        const {active, over} = event;
-    
-        // Find the corresponding step from steps using the id
-        const activeStep = steps.find(step => step.id === active.id);
-        const overStep = steps.find(step => step.id === over.id);
-    
-        // Ensure both active and over steps exist
-        if (!activeStep || !overStep) return;
-    
-        // Get their order
-        if (activeStep.order === overStep.order) return;
-    
-        setSteps((steps) => {
-            const originalPos = getTaskPos(activeStep.order);
-            const newPos = getTaskPos(overStep.order);
-            doSwap(activeStep.id, overStep.id)
-            return arrayMove(steps, originalPos, newPos);
-        });
-    }
-
     const handleSave = async (stepId) =>{
         let csrfToken = getCsrfToken();
         let response = await putStep(authTokens, csrfToken, formData, stepId);
         if(response.status === 200){
-            console.log("doom")
             setEditStepKey(null);
             setEditStepId(null);
             fetchUserSteps(recipeId);
@@ -209,6 +186,8 @@ const UserRecipePage = () => {
             if(response.status === 200){
                 fetchUserSteps(recipeId);
                 resetFormData();
+            }else{
+                alert("Title cannot be left empty!")
             };
         };
         clearForms();
@@ -218,22 +197,21 @@ const UserRecipePage = () => {
         setFormData({"name": "", "ingredient": "", "unit": "tbsp", "quantity": "", "user_id": user.user_id, "description": "", "recipe_description": "", "step_description": "", "step_title" : ""});
     };
 
-    const toggleStepEdit = (key, stepId) =>{
-        if(editStepKey === null){
-            let stepTitle = document.getElementById(`stepTitleTextArea${key}`).value;
-            let stepDescription = document.getElementById(`stepDescriptionTextArea${key}`).value;
+    const toggleStepEdit = async(key, stepId) =>{
 
-            setEditStepId(stepId);
-            setEditStepKey(key);
-            setFormData({
-                ...formData,
-                "step_description": stepDescription,
-                "step_title": stepTitle,
-            });
-        }else if(editStepKey !== key){
-            /* HAVENT SET editStepKey therefore key != editStepkey therefore not showing crud */
-
+        if(editStepKey !== null){
+            await handleSave(editStepId);
         };
+
+        let stepTitle = document.getElementById(`stepTitleTextArea${key}`).value;
+        let stepDescription = document.getElementById(`stepDescriptionTextArea${key}`).value;
+        setEditStepId(stepId);
+        setEditStepKey(key);
+        setFormData({
+            ...formData,
+            "step_description": stepDescription,
+            "step_title": stepTitle,
+        });
     };
 
     useEffect( () => {
@@ -249,10 +227,14 @@ const UserRecipePage = () => {
                 {userRecipes.map((recipe, index) => (
                     <>
                         <RecipeCard changeMode={changeMode} index={index} editMode={editMode} recipe={recipe} recipeId={recipeId}/>
+                        
                         <div className={`${editMode && recipeId === recipe.id ? "stepCreationCard" : "hide"}`}>
-                            <h1>Create Step</h1>
+                         <h1><u>Create a step</u></h1>
                             <form className="x" id="stepsForm" onSubmit={handleSubmit}>  
-                                <textarea className="textarea" name="stepsText"  onChange={handleChange}></textarea>
+                                <label className="loginLabel" type="text" for="stepsTitle">Title of step</label>
+                                <textarea className="textarea" name="stepsTitle" onChange={handleChange} maxlength="50" placeholder='Title cannot be empty!'></textarea>
+                                <label className="loginLabel" type="text" for="stepsText">Description of step</label>
+                                <textarea className="textarea stepDescription" name="stepsText"  onChange={handleChange}></textarea>
                                 <input className="sbt-btn" type="submit" value="Submit"/>
                             </form>
                         </div>
@@ -274,16 +256,12 @@ const UserRecipePage = () => {
                 ))}
             </div>
             <div className={`${editMode ? "" : "hide"}`}>
-                <DndContext collisionDetection={closestCorners} onDragEnd={handleDragEnd}>
-                    <div className='card-container'>
-                        <SortableContext items={steps} strategy={verticalListSortingStrategy}>
-                            <h1>Steps to the recipe</h1>
-                            {steps?.map ((step, index) => (
-                                <Step  editStepKey={editStepKey} handleChange={handleChange} handleDelete={handleDelete} handleSave={handleSave} index={index} step={step} toggleStepEdit={toggleStepEdit} />
-                            ))}
-                        </SortableContext>
-                    </div>
-                </DndContext>
+                <div className='card-container'>
+                        <h1>Steps to the recipe</h1>
+                        {steps?.map ((step, index) => (
+                            <Step editStepKey={editStepKey} handleChange={handleChange} handleDelete={handleDelete} handleSave={handleSave} index={index} step={step} toggleStepEdit={toggleStepEdit} />
+                        ))}
+                </div>
             </div>
         </div>
     )
