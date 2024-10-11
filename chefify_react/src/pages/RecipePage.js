@@ -5,6 +5,8 @@ import '../styling/css/page.css';
 import { getSteps, getMessages, getRecipeComponents, postMessage, getRecipe, postReview, putReview, deleteReview, getUserReview, getReviews} from '../utils/CRUD';
 import food from '../styling/images/a.png';
 import "../styling/css/recipePage.css";
+import RecipeComponentCard from '../components/card/RecipeComponentCard';
+import ReviewTab from '../components/tabs/ReviewTab';
 
 const RecipePage = () => {
 
@@ -236,23 +238,13 @@ const RecipePage = () => {
   return (
     <div className="page-container recipePage">
       <div>
-        <Link to={`/recipe/${recipeId}/component-form`}>Add Ingredient Component</Link>
         <div className='recipeComponent-container'>
             {recipeComponents.map((component) => (
-                <div key={component.id} className="recipeComponent">
-                    <img src={food}/>
-                    <h1>{component.name}</h1>
-                    <div className="ingredientUnits-container">
-                        {component.ingredientsList.map((ingredient) => (
-                            <p key={ingredient.id}>{ingredient.quantity} {ingredient.unit}: {ingredient.ingredient.name}</p>
-                        ))}
-                    </div>
-                </div>
+              <RecipeComponentCard component={component}/>
             ))}
           </div>
       </div>
       <div>
-        <Link to={`/recipe/${recipeId}/form`}>Add Steps</Link>
         <div className='steps-container recipePageContent-container'>
           {steps.map ((step, index) => (
             <div>
@@ -263,10 +255,7 @@ const RecipePage = () => {
         </div>
       </div>
       <div>
-      <Link to={`/recipe/${recipeId}/form`}>Add Steps</Link>
         <div>
-
-
           <div className='averageReview-container recipePageContent-container'>
             <h1 className="header-font-size">{recipe.name}</h1>
             <h3 className='subheading'>Public Rating:</h3>
@@ -291,9 +280,9 @@ const RecipePage = () => {
           <div className='recipePageContent-container' id="review-section">
             Your Review: 
           
-            <input style={{float:"right"}} type="submit" value="Edit"  onClick={changeMode} id="editReview" className={editOffMode ? "" : "hide"} name="editReview"/>
-            <input style={{float:"right"}} type="submit" value="Save" onClick={handleSubmit} id="saveReview" className={editOnMode ? "" : "hide"} name="saveReview"/>
-            <input style={{float:"right"}} type="submit" value="Submit" onClick={handleSubmit} id="submitReview" className={submitMode ? "" : "hide"} name="submitReview"/>
+            <input style={{float:"right"}} type="submit" value="Edit"  onClick={changeMode} id="editReview" className={editOffMode ? "btn" : "hide"} name="editReview"/>
+            <input style={{float:"right"}} type="submit" value="Save" onClick={handleSubmit} id="saveReview" className={editOnMode ? "btn" : "hide"} name="saveReview"/>
+            <input style={{float:"right"}} type="submit" value="Submit" onClick={handleSubmit} id="submitReview" className={submitMode ? "btn" : "hide"} name="submitReview"/>
             
             <br/>
             <fieldset className={`rate ${submitMode || editOnMode ? "" : "non-clickable"}`} onChange={handleChange} name="rating" id="starRating">
@@ -314,21 +303,10 @@ const RecipePage = () => {
               <textarea className={submitMode || editOnMode ? "" : "hide"} id="reviewTextEdit" name="review_text" rows="20" cols="60" placeholder='Your review ...' onChange={handleChange}></textarea>
             </form>
 
-            <input style={{float:"right"}} type="submit" value="Delete" onClick={handleSubmit} id="deleteReview" className={editOnMode ? "" : "hide"} name="deleteReview"/>
+            <input style={{float:"right"}} type="submit" value="Delete" onClick={handleSubmit} id="deleteReview" className={editOnMode ? "btn del" : "hide"} name="deleteReview"/>
             <br className={editOnMode ? "" : "hide"}/>
           </div>
-          <div>
-            <div><u>Reviews</u></div>
-            {reviews?.map(item => (
-              <p key={item.id}> {item.user.username} - {item.review_text}</p>
-            ))}
-            {hasMoreReviews && (
-              <button className={reviewPages === 1 ? "hide" : ""} style={{ color: 'black'}} name="goBackReview" onClick={backPage}>Go Back</button>
-            )}
-            {hasMoreReviews && (
-              <button className={hasMoreReviews === false ? "hide" : ""} style={{ color: 'black'}} name="loadMoreReview" onClick={loadMore}>Load More</button>
-            )}
-          </div> 
+          <ReviewTab backPage={backPage} hasMoreReviews={hasMoreReviews} loadMore={loadMore} reviewPages={reviewPages} reviews={reviews}/>
         </div>
         <br/>
         <h1 className='header-font-size'>Comments</h1>
@@ -344,7 +322,7 @@ const RecipePage = () => {
         )}
         <form className='text-box'>
           <textarea name="textarea" rows="20" cols="60" placeholder='Your comment ...' onChange={handleChange}></textarea>
-          <input type="submit" value="Submit" onClick={handleSubmit} name="submitComment"/>
+          <input className="btn" type="submit" value="Submit" onClick={handleSubmit} name="submitComment"/>
         </form>
       </div>
     </div>

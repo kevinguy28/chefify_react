@@ -134,6 +134,20 @@ export const getRecipe = async (authTokens, recipeId, csrfToken) =>{
     return {recipeData}
 };
 
+export const putRecipe = async (authTokens, csrfToken, formData, recipeId) =>{
+    let response = await fetch(`/api/recipe/${recipeId}/`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " +String(authTokens?.access),
+            "X-CSRFToken": csrfToken,
+        },
+        credentials: "include",
+        body: JSON.stringify(formData),
+    });
+    return response;
+};
+
 // Review
 
 export const postReview = async(authTokens, formData, csrfToken) =>{

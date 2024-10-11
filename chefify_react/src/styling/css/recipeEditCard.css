@@ -70,3 +70,8 @@
 .card-textarea:focus{
     background-color: var(--color-bg);
 }
+
+
+.card-form-btn{
+    margin-bottom: 1rem;
+}

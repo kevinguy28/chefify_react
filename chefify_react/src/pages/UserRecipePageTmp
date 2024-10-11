@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from 'react';
 import Step from "./Step";
-import RecipeEditCard from '../components/card/RecipeEditCard';
-import RecipeComponentEditCard from '../components/card/RecipeComponentEditCard';
+import RecipeCard from '../components/card/RecipeCard';
+import RecipeComponentCard from '../components/card/RecipeComponentCard';
 
 import AuthContext from '../context/AuthContext';
 import { getUserRecipes, getRecipe, putRecipe, getRecipeComponents, submitRecipeComponentForm, submitIngredientUnitForm, deleteIngredientUnit, getSteps, postSteps, putStep, putStepsSwapOrder, deleteStep, deleteRecipeComponent} from '../utils/CRUD';
@@ -20,6 +20,7 @@ const UserRecipePage = () => {
     let [load, setLoad] = useState(true);
     let [editMode, setEditMode] = useState(false);
     let [recipeId, setRecipeId] = useState(null);
+    let [recipeEdit, setRecipeEdit] = useState(null);
     let [steps, setSteps] = useState([]);    
     let [editStepKey ,setEditStepKey] = useState(null);
     let [editStepId, setEditStepId] = useState(null);
@@ -36,47 +37,27 @@ const UserRecipePage = () => {
         "step_title": ""
     });
 
+
     const changeLoad= () =>{
         setLoad(true);
         clearForms();
     };
 
-    // const changeMode = (e, recipe) =>{
-    //     if(editMode === false){
-    //         let id = parseInt(e.currentTarget.getAttribute("data-recipe-id"))
-    //         fetchRecipeComponents(e.currentTarget.getAttribute("data-recipe-id"));
-    //         fetchUserSteps(e.currentTarget.getAttribute("data-recipe-id"));
-    //         setRecipeId(parseInt(e.currentTarget.getAttribute("data-recipe-id")));
-    //         setEditMode(true);
-    //         setRecipeEdit(recipe)
-    //     }else if(editMode === true){
-    //         setEditMode(false);
-    //         setRecipeId(null);
-    //         setRecipeComponents([]);
-    //         setSteps([]);
-    //         setRecipeEdit(null);
-    //     }
-    // };
-
-    const changeMode = async (id, index) =>{
+    const changeMode = (e, recipe) =>{
         if(editMode === false){
-            fetchRecipeComponents(id);
-            fetchUserSteps(id);
-            setRecipeId(id);
+            fetchRecipeComponents(e.currentTarget.getAttribute("data-recipe-id"));
+            fetchUserSteps(e.currentTarget.getAttribute("data-recipe-id"));
+            setRecipeId(parseInt(e.currentTarget.getAttribute("data-recipe-id")));
             setEditMode(true);
-            let recipeDescription = document.getElementById(`recipeDescription${index}`).value;
-            setFormData({
-                ...formData,
-                "recipe_description": recipeDescription
-            });
+            setRecipeEdit(recipe)
         }else if(editMode === true){
-            setEditMode(false)
+            setEditMode(false);
             setRecipeId(null);
             setRecipeComponents([]);
             setSteps([]);
-            resetFormData();
+            setRecipeEdit(null);
         }
-    }
+    };
 
     const doSwap = async (step1, step2) =>{
         let csrfToken = getCsrfToken()
@@ -140,7 +121,6 @@ const UserRecipePage = () => {
                 "title": e.target.value
             })
         }else if (e.target.name === "recipeDescription"){
-            console.log(e.target.value)
             setFormData({
                 ...formData,
                 "recipe_description": e.target.value
@@ -173,7 +153,7 @@ const UserRecipePage = () => {
         }else if(e.target.getAttribute("data-type-del") === "step"){
             let response = await deleteStep(authTokens, csrfToken, e.target.getAttribute("data-step-id"));
             if(response.status === 200){
-                fetchUserSteps(recipeId)
+                fetchUserRecipes();
             }
         };
     };
@@ -215,14 +195,16 @@ const UserRecipePage = () => {
         }else if(e.target.id === "updateRecipeDescriptionForm"){
             let response = await putRecipe(authTokens, csrfToken, formData, recipeId);
             if(response.status === 200){
-                fetchUserRecipes();
+                const { recipesData } = await getRecipe(authTokens, recipeId, csrfToken);
+                setRecipeEdit(recipesData);
+                setLoad(true);
             }
         };
         clearForms();
     };
 
     const resetFormData = () =>{
-        setFormData({"name": "", "ingredient": "", "unit": "tbsp", "quantity": "", "user_id": user.user_id, "description": "", "title": "", "recipe_description": "", "step_description": "", "step_title" : ""});
+        setFormData({"name": "", "ingredient": "", "unit": "tbsp", "quantity": "", "user_id": user.user_id, "description": "", "recipe_description": "", "step_description": "", "step_title" : ""});
     };
 
     const toggleStepEdit = async(key, stepId) =>{
@@ -254,7 +236,7 @@ const UserRecipePage = () => {
             <div className={`${editMode ? "recipe-section" : "card-container"}`}>
                 {userRecipes.map((recipe, index) => (
                     <>
-                        <RecipeEditCard changeMode={changeMode} handleChange={handleChange} handleSubmit={handleSubmit} index={index} editMode={editMode} recipe={recipe} recipeId={recipeId} />
+                        <RecipeCard changeMode={changeMode} handleChange={handleChange} handleSubmit={handleSubmit} index={index} editMode={editMode} recipe={recipe} recipeId={recipeId} />
                         
                         <div className={`${editMode && recipeId === recipe.id ? "stepCreationCard" : "hide"}`}>
                          <h1><u>Create a step</u></h1>
@@ -276,11 +258,11 @@ const UserRecipePage = () => {
                 <div className='createUnitForm-width'>
                     <form id="createUnitForm"method="post" onSubmit={handleSubmit}>
                         <input className="ingredientUnitFormField" name="componentInput" placeholder="Add a new recipe component ... " onChange={handleChange}/>
-                        <input className="ingredientUnitFormField btn" type="submit" value="Submit"/>
+                        <input className="ingredientUnitFormField" type="submit" value="Submit"/>
                     </form>
                 </div>
                 {recipeComponents.map((component, index) => (
-                    <RecipeComponentEditCard index={index} component={component} handleDelete={handleDelete} handleChange={handleChange} handleSubmit={handleSubmit}/>
+                    <RecipeComponentCard index={index} component={component} handleDelete={handleDelete} handleChange={handleChange} handleSubmit={handleSubmit}/>
                 ))}
             </div>
             <div className={`${editMode ? "" : "hide"}`}>

@@ -37,14 +37,14 @@ const RecipeTab = () => {
 
       <div className='card-container '>
         {recipes.map((recipe, index) => (
-          <div className="card">
+          <Link className="card pop link"  to={`/recipe/${recipe.id}`} key={index}>
             <img src={food}/>
             <div className='card-content'>             
-              <Link to={`/recipe/${recipe.id}`} key={index}>{recipe.name}<br/></Link>
+              <h1>{recipe.name}<br/></h1>
               <hr />
-              <p>More content More content More content More content More content More content More content More content More content</p>
+              <p>{recipe.description}</p>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

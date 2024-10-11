@@ -152,3 +152,16 @@ h1{
   grid-template-rows: auto 1fr;
   height: 100vh;;
 }
+
+.link{
+  text-decoration: none;
+}
+
+.pop{
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.pop:hover {
+  transform: translateY(-10px) scale(1.05); /* Slight upward movement and scaling */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Adding a shadow to give depth */
+}

@@ -140,8 +140,9 @@ def manageRecipes(request):
         return Response(serializer.data)
 
 # Recipe --> Get singular recipe (RecipePage.js)
-@api_view(['GET'])
+@api_view(['GET', 'PUT'])
 def manageRecipe(request, pk):
+    data = request.data
     if request.method == "GET":
         try:
             recipe = Recipe.objects.get(id=pk)
@@ -149,6 +150,15 @@ def manageRecipe(request, pk):
             return(Response(serializer.data))
         except:
             return Response({"message": "Recipe could not be retrieved."}, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == "PUT":
+        try:
+            recipe = Recipe.objects.get(id=pk)
+            recipe.description = data["recipe_description"]
+            recipe.save()
+            return Response({"message": "Message updated."}, status=status.HTTP_200_OK)
+        except:
+            return Response({"message": "Message could not be updated"}, status=status.HTTP_200_OK)
+
 
 # Reviews (pk = recipe.id, sk = user.user_id) --> Get use review
 @api_view(['GET'])
